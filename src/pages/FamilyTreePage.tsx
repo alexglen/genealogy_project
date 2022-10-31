@@ -6,6 +6,7 @@ import {ScaleForm} from "../components/ScaleForm/ScaleForm";
 import {IObjectConvertedInCamelNotationData, IObjectData} from "../models";
 import {convertDataMemberFamily, convertDataMembersFamily} from "../helpers";
 import {temporaryData} from "../temporaryData";
+import {Typography} from "antd";
 
 export const FamilyTreePage: React.FC = () => {
     const [data, setData] = useState<IObjectConvertedInCamelNotationData>({});
@@ -34,10 +35,13 @@ export const FamilyTreePage: React.FC = () => {
     return (
         <div>
             <HeaderFamilyTree firstName={data.firstName ?? "A"} lastName={data.lastName ?? "A"}/>
-            {Object.keys(data).length ? <Tree label={<div>Ваша родословная</div>}>
+            {Object.keys(data).length ? <Tree label={<Typography.Title level={4}>
+                Ваша родословная
+            </Typography.Title>}>
                 <RecursiveTreeNode key={data.id} {...data} />
             </Tree> : null}
             <ScaleForm/>
         </div>
     )
 }
+

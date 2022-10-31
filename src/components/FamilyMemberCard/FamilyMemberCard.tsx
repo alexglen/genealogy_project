@@ -10,7 +10,6 @@ import "./FamilyMemberCard.scss";
 
 // @ts-ignore
 export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotationData) => {
-    console.log("familyMember", familyMember);
     const {
         firstName,
         lastName,
@@ -62,7 +61,7 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
                         <div className="buttons-for-adding">
                             {Array.from(buttonsForAddingParents)?.map(gender => {
                                     if (gender === "empty") {
-                                        return <p style={{fontSize: 12}}>{lastName}</p>
+                                        return <p style={{fontSize: 12}} key={gender}>{lastName}</p>
                                     } else {
                                         return <ButtonForAddingNewFamilyMember
                                             key={gender}

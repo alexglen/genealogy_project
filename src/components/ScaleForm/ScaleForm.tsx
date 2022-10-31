@@ -11,7 +11,7 @@ export const ScaleForm: React.FC = () => {
         <div className='scale'>
             <Tooltip title="Увеличить">
                 <Button type="primary" shape="circle" icon={<PlusCircleOutlined/>}
-                        onClick={() => scale <= 2.3 && changeScale(scale + .25)}/>
+                        onClick={() => scale <= 1.8 && changeScale(scale + .25)}/>
             </Tooltip>
             <Button type="primary" shape="circle">{scale.toFixed(1)}</Button>
             <Tooltip title="Уменьшить">
