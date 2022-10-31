@@ -19,30 +19,21 @@ export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableMo
         spouse,
         avatar,
         birthDate,
-        mother,
         id,
         bio,
         deathDate,
-        approximateDeathDate,
-        father,
         gender,
-        isNoParents,
         parents
     } = familyMember;
     const [isConfirmDeletingFamilyMemberOpen, setIsConfirmDeletingFamilyMemberOpen] = useState<boolean>(false);
 
-    const handleOk = () => {
+    const cancelModal = () => {
         setOpen?.(false);
     };
 
-    const handleCancel = () => {
-        setOpen?.(false);
-    };
-
-    const editFamilyMemberInfo = () => {
+    const openEditFamilyMemberModal = () => {
         setOpen?.(false);
         setOpenEditableModal?.(true);
-
     }
 
     const deleteFamilyMember = () => {
@@ -50,7 +41,8 @@ export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableMo
     }
 
     const lifeYears = deathDate ? `(${getDateForFamilyMemberCard(birthDate as string)} - ${getDateForFamilyMemberCard(deathDate)})`
-        : `(род. ${getDateForFamilyMemberCard(birthDate as string)})`;
+        : `(р. ${getDateForFamilyMemberCard(birthDate as string)})`;
+
     const status: "Муж" | "Жена" = gender === FEMALE ? "Муж" : "Жена";
     const genderName: "женский" | "мужской" = gender === FEMALE ? "женский" : "мужской";
     const spouses: IObjectData[] = temporaryData.filter(({id}) => spouse?.includes(id));
@@ -64,11 +56,10 @@ export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableMo
             <Modal
                 open={open}
                 title={`${firstName} ${lastName} ${lifeYears}`}
-                onOk={handleOk}
-                onCancel={handleCancel}
+                onCancel={cancelModal}
                 width={460}
                 footer={[
-                    <Button key="back" onClick={editFamilyMemberInfo}>
+                    <Button key="back" onClick={openEditFamilyMemberModal}>
                         Редактировать
                     </Button>,
                     <Button key="submit" type="primary" onClick={deleteFamilyMember}

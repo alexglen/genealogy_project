@@ -22,7 +22,7 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
     const [open, setOpen] = useState<boolean>(false);
 
     const {scale} = useScale() as { scale: number };
-    const [isOpenEditableModal, setOpenEditableModal] = useState(false);
+    const [isOpenEditableModal, setOpenEditableModal] = useState<boolean>(false);
     const cardColor = gender === MALE ? MALE_COLOR : FEMALE_COLOR;
 
     const classes = ["card"];

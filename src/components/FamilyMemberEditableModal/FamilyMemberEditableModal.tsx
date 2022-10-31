@@ -4,6 +4,7 @@ import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
 import {FamilyMemberInfoType} from "../../models";
 import {FEMALE} from "../../constants";
 import "./FamilyMemberEditableModal.scss";
+import {getDateForFamilyMemberCard} from "../../helpers";
 
 export const FamilyMemberEditableModal = ({
                                               isOpenEditableModal,
@@ -11,11 +12,11 @@ export const FamilyMemberEditableModal = ({
                                               setOpenEditableModal
                                           }: FamilyMemberInfoType) => {
     const {firstName, lastName, birthDate, deathDate, avatar, gender, maidenName, bio} = familyMember;
-    const lifeYears: string = deathDate ? `(${birthDate} - ${deathDate})` : `(род. ${birthDate})`;
+    const lifeYears = deathDate ? `(${getDateForFamilyMemberCard(birthDate as string)} - ${getDateForFamilyMemberCard(deathDate)})`
+        : `(р. ${getDateForFamilyMemberCard(birthDate as string)})`;
 
     const handleCancel = () => {
         setOpenEditableModal?.(false);
-
     };
 
     const handleOk = () => {
@@ -28,9 +29,11 @@ export const FamilyMemberEditableModal = ({
             <Modal
                 open={isOpenEditableModal}
                 title={`${firstName} ${lastName} ${lifeYears}`}
+                className="family-member-editable-modal"
                 onOk={handleOk}
                 onCancel={handleCancel}
                 width={460}
+                style={{top: 20}}
                 footer={[
                     <Button key="back">
                         Сохранить
