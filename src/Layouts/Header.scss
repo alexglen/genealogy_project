@@ -1,0 +1,27 @@
+.header {
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  width: 86%;
+  margin: 0 auto;
+  align-items: center;
+  color: #f4a261;
+
+  img {
+    width: 50px;
+    border-radius: 50%;
+  }
+
+  .links a {
+    color: white;
+
+    &:last-child {
+      margin-left: 10px;
+    }
+
+    &:hover {
+      color: #f4a261;
+    }
+  }
+
+}

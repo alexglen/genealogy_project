@@ -1,0 +1,11 @@
+.scale {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 1%;
+
+  button {
+    margin-top: 5px;
+  }
+}

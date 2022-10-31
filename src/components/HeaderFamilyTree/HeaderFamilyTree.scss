@@ -1,0 +1,24 @@
+.header-family-tree-container {
+  border-bottom: 1px solid #d9cbcb;
+
+  .header-family-tree {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 75px;
+
+
+    & button {
+      background-color: #e76f51;
+      border-color: #e76f51;
+
+      &:hover {
+        background-color: #ec5f39;
+        border-color: #ec5f39;
+      }
+    }
+  }
+}
+
