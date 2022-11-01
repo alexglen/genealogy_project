@@ -1,7 +1,8 @@
 import React from 'react';
-import {Button, DatePicker, Form, Input, Select, Typography} from 'antd';
 import {Link, useNavigate} from 'react-router-dom';
+import {Button, DatePicker, Form, Input, Select, Typography} from 'antd';
 import {useAuth} from "../../context/authContext";
+import {IUser} from "../../models";
 import "./RegistrationForm.scss";
 
 const {Option} = Select;
@@ -9,10 +10,11 @@ const {Option} = Select;
 export const RegistrationForm: React.FC = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-    // @ts-ignore
-    const {changeAuthStatus} = useAuth();
 
-    const onFinish = async ({firstName, gender, surname, password, email}: any) => {
+    const {changeAuthStatus} = useAuth() as { changeAuthStatus: (status: boolean) => {} };
+
+    const registerUser = async (data: IUser) => {
+        console.log('DATA', data);
         // const body = {password, repeat_password: password, username: email, email};
         //const body = {"username": "adle5x4", "email": "aldex12@mail.ru", "password": "1234", "repeat_password": "1234"}
         navigate('/tree');
@@ -28,23 +30,6 @@ export const RegistrationForm: React.FC = () => {
         //     body: JSON.stringify(body),
         // })
         // console.log('RES', res);
-    };
-
-    const onFinishFailed = (errorInfo: any): void => {
-        console.log('Failed:', errorInfo);
-    };
-
-    const onGenderChange = (value: string): string | void => {
-        switch (value) {
-            case 'male':
-                form.setFieldsValue({note: 'Hi, man!'});
-                return;
-            case 'female':
-                form.setFieldsValue({note: 'Hi, lady!'});
-                return;
-            default:
-                return;
-        }
     };
 
     return (
@@ -63,8 +48,7 @@ export const RegistrationForm: React.FC = () => {
                 initialValues={{
                     remember: true,
                 }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
+                onFinish={registerUser}
                 autoComplete="off"
             >
                 <Form.Item
@@ -73,7 +57,8 @@ export const RegistrationForm: React.FC = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Пожалуйста, напишите Ваш email',
+                            message: 'Пожалуйста, напишите Ваш корректный email',
+                            type: "email"
                         },
                     ]}
                 >
@@ -86,24 +71,13 @@ export const RegistrationForm: React.FC = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'Напишите Ваш пароль',
+                            message: 'Пароль должен быть длиннее',
+                            min: 8
                         },
                     ]}
                 >
                     <Input.Password/>
 
-                </Form.Item>
-                <Form.Item
-                    label="Подтвердите пароль"
-                    name="confirm_password"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Повторите пароль',
-                        },
-                    ]}
-                >
-                    <Input.Password/>
                 </Form.Item>
 
                 <Form.Item
@@ -111,7 +85,7 @@ export const RegistrationForm: React.FC = () => {
                     name="firstName"
                     rules={[
                         {
-                            // required: true,
+                            required: true,
                             message: 'Пожалуйста, напишите своё имя',
                         },
                     ]}
@@ -121,23 +95,16 @@ export const RegistrationForm: React.FC = () => {
 
                 <Form.Item
                     label="Ваша Фамилия"
-                    name="surname"
-                    rules={[
-                        {
-                            // required: true,
-                            message: 'Пожалуйста, напишите свою фамилию',
-                        },
-                    ]}
+                    name="lastName"
                 >
                     <Input/>
                 </Form.Item>
 
                 <Form.Item name="gender" label="Пол" rules={[{
-                    // required: true
+                    required: true
                 }]}>
                     <Select
                         placeholder="Ваш пол"
-                        onChange={onGenderChange}
                         allowClear
                     >
                         <Option value="male">Мужской</Option>

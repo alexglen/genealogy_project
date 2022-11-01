@@ -1,7 +1,12 @@
 import React from "react";
 import {Modal} from "antd";
+import {IConfirmDeletingFamilyMemberModal} from "../../models";
 
-export const ConfirmDeletingFamilyMemberModal = ({isModalOpen, setIsConfirmDeletingFamilyMemberOpen, id}: any) => {
+export const ConfirmDeletingFamilyMemberModal = ({
+                                                     isModalOpen,
+                                                     setIsConfirmDeletingFamilyMemberOpen,
+                                                     id
+                                                 }: IConfirmDeletingFamilyMemberModal) => {
 
     const deleteFamilyMember = async () => {
         setIsConfirmDeletingFamilyMemberOpen(false);

@@ -4,13 +4,10 @@ import {Button, Checkbox, Form, Input, Typography} from "antd";
 
 export const AuthorizationForm = () => {
     const navigate = useNavigate();
-    const onFinish = ({email, password, remember}: { email: string, password: string, remember: boolean }) => {
+
+    const loginUser = ({email, password, remember}: { email: string, password: string, remember: boolean }) => {
         console.log(email, password, remember);
         navigate('/tree');
-    };
-
-    const onFinishFailed = (errorInfo: any): void => {
-        console.log('Failed:', errorInfo);
     };
 
     return (
@@ -29,8 +26,7 @@ export const AuthorizationForm = () => {
                 initialValues={{
                     remember: false,
                 }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
+                onFinish={loginUser}
                 autoComplete="off"
             >
                 <Form.Item
@@ -54,6 +50,7 @@ export const AuthorizationForm = () => {
                         {
                             required: true,
                             message: 'Напишите Ваш пароль',
+                            min: 8
                         },
                     ]}
                 >

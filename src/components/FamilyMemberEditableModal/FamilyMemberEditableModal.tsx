@@ -2,35 +2,59 @@ import React from "react";
 import {Button, Form, Input, Modal, Radio, Space} from "antd";
 import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
 import {FamilyMemberInfoType} from "../../models";
-import {FEMALE} from "../../constants";
-import "./FamilyMemberEditableModal.scss";
 import {getDateForFamilyMemberCard} from "../../helpers";
+import {ConfirmDeletingFamilyMemberModal} from "../ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
+import {FEMALE, MALE} from "../../constants";
+import "./FamilyMemberEditableModal.scss";
 
 export const FamilyMemberEditableModal = ({
-                                              isOpenEditableModal,
+                                              editableModal,
                                               familyMember,
-                                              setOpenEditableModal
+                                              setEditableModal,
+                                              setIsConfirmDeletingFamilyMemberOpen,
+                                              isConfirmDeletingFamilyMemberOpen
                                           }: FamilyMemberInfoType) => {
-    const {firstName, lastName, birthDate, deathDate, avatar, gender, maidenName, bio} = familyMember;
+    const {
+        firstName,
+        lastName,
+        birthDate,
+        deathDate,
+        avatar,
+        gender,
+        maidenName,
+        bio,
+        treeOwner,
+        parents,
+        id
+    } = familyMember;
+
+    const {isNewFamilyMember, gender: genderStatus} = editableModal;
+    console.log("genderStatus", genderStatus)
+
     const lifeYears = deathDate ? `(${getDateForFamilyMemberCard(birthDate as string)} - ${getDateForFamilyMemberCard(deathDate)})`
         : `(р. ${getDateForFamilyMemberCard(birthDate as string)})`;
 
     const handleCancel = () => {
-        setOpenEditableModal?.(false);
+        setEditableModal((state: { isOpenModal: boolean, isNewFamilyMember: boolean }) => ({
+            isOpenModal: false,
+            isNewFamilyMember: false
+        }))
     };
 
-    const handleOk = () => {
-        console.log('Some');
+    const deleteFamilyMember = () => {
+        setIsConfirmDeletingFamilyMemberOpen(true);
     }
+
+    const titleTextOfNewMemberFamily = genderStatus === MALE ? `${firstName} ${lastName} : добавить отца` : `${firstName} ${lastName}: добавить мать`
+    const titleText = !isNewFamilyMember ? `${firstName} ${lastName} ${lifeYears}` : titleTextOfNewMemberFamily;
 
     // @ts-ignore
     return (
-        <>
+        <div>
             <Modal
-                open={isOpenEditableModal}
-                title={`${firstName} ${lastName} ${lifeYears}`}
+                open={editableModal.isOpenModal}
+                title={titleText}
                 className="family-member-editable-modal"
-                onOk={handleOk}
                 onCancel={handleCancel}
                 width={460}
                 style={{top: 20}}
@@ -38,7 +62,8 @@ export const FamilyMemberEditableModal = ({
                     <Button key="back">
                         Сохранить
                     </Button>,
-                    <Button key="submit" type="primary">
+                    <Button key="submit" type="primary" disabled={(treeOwner || parents?.length) as boolean}
+                            onClick={deleteFamilyMember}>
                         Удалить
                     </Button>
                 ]}
@@ -50,12 +75,11 @@ export const FamilyMemberEditableModal = ({
                             span: 8,
                         }}
                         initialValues={{
-                            remember: true,
-                            lastName: lastName,
-                            firstName: firstName,
-                            surname: lastName,
-                            maidenName: maidenName,
-                            bio: bio
+                            lastName: isNewFamilyMember ? "" : lastName,
+                            firstName: isNewFamilyMember ? "" : firstName,
+                            surname: isNewFamilyMember ? "" : lastName,
+                            maidenName: isNewFamilyMember ? "" : maidenName,
+                            bio: isNewFamilyMember ? "" : bio
 
                         }}
                         autoComplete="off"
@@ -113,7 +137,7 @@ export const FamilyMemberEditableModal = ({
                         </Form.Item> : null}
 
                         <Form.Item>
-                            <Radio.Group value={deathDate ? "dead" : "alive"}>
+                            <Radio.Group value={isNewFamilyMember ? "" : deathDate ? "dead" : "alive"}>
                                 <Radio value="alive">{gender === FEMALE ? "Жива" : "Жив"}</Radio>
                                 <Radio value="dead">{gender === FEMALE ? "Умерла" : "Умер"}</Radio>
                             </Radio.Group>
@@ -136,5 +160,8 @@ export const FamilyMemberEditableModal = ({
                     <FamilyMemberImage img={avatar}/>
                 </div>
             </Modal>
-        </>)
+            <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
+                                              setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
+                                              id={id}/>
+        </div>)
 }

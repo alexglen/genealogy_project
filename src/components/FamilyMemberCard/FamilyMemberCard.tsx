@@ -4,7 +4,7 @@ import {FamilyMemberEditableModal} from "../FamilyMemberEditableModal/FamilyMemb
 import {FamilyMemberInfo} from "../FamilyMemberInfo/FamilyMemberInfo";
 import {TreeNode} from "react-organizational-chart";
 import {IObjectConvertedInCamelNotationData} from "../../models";
-import {FEMALE, FEMALE_BUTTON_COLOR, FEMALE_COLOR, MALE, MALE_BUTTON_COLOR, MALE_COLOR} from "../../constants";
+import {FEMALE, FEMALE_BUTTON_COLOR, MALE, MALE_BUTTON_COLOR} from "../../constants";
 import {useScale} from "../../context/scaleContext";
 import "./FamilyMemberCard.scss";
 
@@ -20,10 +20,13 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
     } = familyMember;
 
     const [open, setOpen] = useState<boolean>(false);
-
     const {scale} = useScale() as { scale: number };
-    const [isOpenEditableModal, setOpenEditableModal] = useState<boolean>(false);
-    const cardColor = gender === MALE ? MALE_COLOR : FEMALE_COLOR;
+    const [editableModal, setEditableModal] = useState<{ isOpenModal: boolean, isNewFamilyMember: boolean, gender: string }>({
+        isOpenModal: false,
+        isNewFamilyMember: false,
+        gender: ""
+    });
+    const [isConfirmDeletingFamilyMemberOpen, setIsConfirmDeletingFamilyMemberOpen] = useState<boolean>(false);
 
     const classes = ["card"];
     if (gender === MALE) {
@@ -65,8 +68,8 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
                                     } else {
                                         return <ButtonForAddingNewFamilyMember
                                             key={gender}
-                                            color={gender === MALE ? FEMALE_BUTTON_COLOR : MALE_BUTTON_COLOR}
-                                            setOpenEditableModal={setOpenEditableModal} scale={scale}/>
+                                            gender={gender}
+                                            setEditableModal={setEditableModal} scale={scale}/>
                                     }
                                 }
                             )}
@@ -78,11 +81,16 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
 
             }/>
             <FamilyMemberInfo setOpen={setOpen} open={open} familyMember={familyMember}
-                              setOpenEditableModal={setOpenEditableModal}/>
+                              setEditableModal={setEditableModal}
+                              isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
+                              setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
+                              editableModal={editableModal}/>
             <FamilyMemberEditableModal
-                isOpenEditableModal={isOpenEditableModal}
+                editableModal={editableModal}
                 familyMember={familyMember}
-                setOpenEditableModal={setOpenEditableModal}
+                setEditableModal={setEditableModal}
+                isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
+                setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
             />
         </>
     )

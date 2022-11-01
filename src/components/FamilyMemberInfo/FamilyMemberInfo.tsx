@@ -10,7 +10,15 @@ import "./FamilyMemberInfo.scss";
 
 const {Text, Paragraph} = Typography;
 
-export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableModal}: FamilyMemberInfoType) => {
+
+export const FamilyMemberInfo = ({
+                                     setOpen,
+                                     open,
+                                     familyMember,
+                                     setEditableModal,
+                                     isConfirmDeletingFamilyMemberOpen,
+                                     setIsConfirmDeletingFamilyMemberOpen
+                                 }: FamilyMemberInfoType) => {
     const {
         firstName,
         lastName,
@@ -23,9 +31,9 @@ export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableMo
         bio,
         deathDate,
         gender,
-        parents
+        parents,
     } = familyMember;
-    const [isConfirmDeletingFamilyMemberOpen, setIsConfirmDeletingFamilyMemberOpen] = useState<boolean>(false);
+
 
     const cancelModal = () => {
         setOpen?.(false);
@@ -33,7 +41,7 @@ export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableMo
 
     const openEditFamilyMemberModal = () => {
         setOpen?.(false);
-        setOpenEditableModal?.(true);
+        setEditableModal?.((state: any)=> ({...state, isOpenModal: true}));
     }
 
     const deleteFamilyMember = () => {
@@ -52,7 +60,7 @@ export const FamilyMemberInfo = ({setOpen, open, familyMember, setOpenEditableMo
                                                                           }) => `${first_name} ${last_name}`) : [];
 
     return (
-        <div className="family-member-info">
+        <div>
             <Modal
                 open={open}
                 title={`${firstName} ${lastName} ${lifeYears}`}

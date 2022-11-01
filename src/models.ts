@@ -1,3 +1,10 @@
+import {
+    ButtonForAddingNewFamilyMember
+} from "./components/ButtonForAddingNewFamilyMember/ButtonForAddingNewFamilyMember";
+import {
+    ConfirmDeletingFamilyMemberModal
+} from "./components/ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
+
 export interface IObjectData {
     "id": number,
     "gender": "M" | "F",
@@ -41,7 +48,31 @@ export type FamilyMemberInfoType = {
     setOpen?: (open: boolean) => any,
     open?: boolean,
     familyMember: IObjectConvertedInCamelNotationData,
-    setOpenEditableModal?: (open: boolean) => any,
-    openEditableModal?: boolean,
-    isOpenEditableModal?: boolean
+    setEditableModal?: any,
+    openEditableModal?: any,
+    isOpenEditableModal?: any
+    isConfirmDeletingFamilyMemberOpen: boolean,
+    setIsConfirmDeletingFamilyMemberOpen: any,
+    editableModal: any
+}
+
+export interface IUser {
+    email: string,
+    password: string,
+    fistName: string,
+    lastName?: string,
+    gender: string,
+    date?: string
+}
+
+export interface IButtonForAddingNewFamilyMember {
+    gender: string,
+    setEditableModal: any,
+    scale: number
+}
+
+export interface IConfirmDeletingFamilyMemberModal {
+    isModalOpen: boolean,
+    setIsConfirmDeletingFamilyMemberOpen: (open: boolean) => void,
+    id: number | undefined
 }
