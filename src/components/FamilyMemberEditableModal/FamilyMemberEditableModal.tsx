@@ -58,7 +58,7 @@ export const FamilyMemberEditableModal = ({
                 onCancel={handleCancel}
                 width={460}
                 style={{top: 20}}
-                footer={[
+                footer={!isNewFamilyMember ? [
                     <Button key="back">
                         Сохранить
                     </Button>,
@@ -66,7 +66,10 @@ export const FamilyMemberEditableModal = ({
                             onClick={deleteFamilyMember}>
                         Удалить
                     </Button>
-                ]}
+                ] : [
+                    <Button key="back">
+                        Сохранить
+                    </Button>]}
             >
                 <div>
                     <Form
