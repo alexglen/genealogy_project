@@ -59,7 +59,8 @@ export type FamilyMemberInfoType = {
 export interface IUser {
     email: string,
     password: string,
-    fistName: string,
+    rePassword: string,
+    firstName: string,
     lastName?: string,
     gender: string,
     date?: string

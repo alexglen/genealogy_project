@@ -1,13 +1,17 @@
 import React from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Button, Checkbox, Form, Input, Typography} from "antd";
+import {loginUser} from "../../requests";
+import {useAuth} from "../../context/authContext";
 
 export const AuthorizationForm = () => {
     const navigate = useNavigate();
 
-    const loginUser = ({email, password, remember}: { email: string, password: string, remember: boolean }) => {
-        console.log(email, password, remember);
-        navigate('/tree');
+    const {changeAuthStatus} = useAuth() as { changeAuthStatus: (status: boolean) => {} };
+
+    const login = ({firstName, password}: { firstName: string, password: string }) => {
+        loginUser({username: firstName, password}).then(res => res === "ok" && navigate("/tree"));
+        changeAuthStatus(true);
     };
 
     return (
@@ -26,15 +30,14 @@ export const AuthorizationForm = () => {
                 initialValues={{
                     remember: false,
                 }}
-                onFinish={loginUser}
+                onFinish={login}
                 autoComplete="off"
             >
                 <Form.Item
-                    label="Email"
-                    name="email"
+                    label="Ваше имя"
+                    name="firstName"
                     rules={[
                         {
-                            type: 'email',
                             required: true,
                             message: 'Пожалуйста, напишите Ваш email',
                         },

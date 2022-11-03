@@ -3,12 +3,13 @@ import {Button, Dropdown, Menu, Typography} from 'antd';
 import {useAuth} from "../../context/authContext";
 import {Link} from "react-router-dom";
 import "./HeaderFamilyTree.scss";
+import {logoutUser} from "../../requests";
 
 const {Title} = Typography;
 
-export const HeaderFamilyTree = ({firstName, lastName}: {firstName: string, lastName: string}) => {
+export const HeaderFamilyTree = ({firstName, lastName}: { firstName: string, lastName: string }) => {
 
-    const {setAuth} = useAuth() as {setAuth: (auth: boolean) => boolean};
+    const {setAuth} = useAuth() as { setAuth: (auth: boolean) => boolean };
 
     const menu = (
         <Menu
@@ -32,7 +33,7 @@ export const HeaderFamilyTree = ({firstName, lastName}: {firstName: string, last
                 {
                     key: '3',
                     label: (
-                        <Link to="/">
+                        <Link to="/" onClick={() => logoutUser().then(res => console.log("RES", res))}>
                             Выйти
                         </Link>
                     ),

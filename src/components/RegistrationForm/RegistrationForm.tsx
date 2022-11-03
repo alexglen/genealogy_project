@@ -1,36 +1,25 @@
 import React from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import {Button, DatePicker, Form, Input, Select, Typography} from 'antd';
-import {useAuth} from "../../context/authContext";
 import {IUser} from "../../models";
 import "./RegistrationForm.scss";
+import {postDataUser} from "../../requests";
 
 const {Option} = Select;
 
-export const RegistrationForm: React.FC = () => {
-    const [form] = Form.useForm();
+export const RegistrationForm = () => {
     const navigate = useNavigate();
 
-    const {changeAuthStatus} = useAuth() as { changeAuthStatus: (status: boolean) => {} };
-
-    const registerUser = async (data: IUser) => {
-        console.log('DATA', data);
-        // const body = {password, repeat_password: password, username: email, email};
-        //const body = {"username": "adle5x4", "email": "aldex12@mail.ru", "password": "1234", "repeat_password": "1234"}
-        navigate('/tree');
-        changeAuthStatus(true);
-
-        // const res = await fetch("http://127.0.0.1:8000/api/v1/token/register/", {
-        //     mode: 'no-cors',
-        //     method: "POST",
-        //     headers: {
-        //         contentType: 'application/json',
-        //         // "Accept": "/"
-        //     },
-        //     body: JSON.stringify(body),
-        // })
-        // console.log('RES', res);
-    };
+    const registerUser = (body: IUser) => {
+        postDataUser(body).then(({data}: any) => {
+            navigate("/successfully-registered", {
+                state: {
+                    email: data.email,
+                    username: data.username
+                }
+            })
+        })
+    }
 
     return (
         <div>
@@ -68,6 +57,21 @@ export const RegistrationForm: React.FC = () => {
                 <Form.Item
                     label="Пароль"
                     name="password"
+                    rules={[
+                        {
+                            required: true,
+                            message: 'Пароль должен быть длиннее',
+                            min: 8
+                        },
+                    ]}
+                >
+                    <Input.Password/>
+
+                </Form.Item>
+
+                <Form.Item
+                    label="Повторите Ваш пароль"
+                    name="rePassword"
                     rules={[
                         {
                             required: true,
