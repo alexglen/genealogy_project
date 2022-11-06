@@ -1,19 +1,22 @@
 import React from "react";
 import {Modal} from "antd";
 import {IConfirmDeletingFamilyMemberModal} from "../../models";
+import {deletePerson} from "../../requests";
 
 export const ConfirmDeletingFamilyMemberModal = ({
                                                      isModalOpen,
                                                      setIsConfirmDeletingFamilyMemberOpen,
-                                                     id
+                                                     id,
+                                                     setEditableModal,
+                                                     setOpen
                                                  }: IConfirmDeletingFamilyMemberModal) => {
 
-    const deleteFamilyMember = async () => {
-        setIsConfirmDeletingFamilyMemberOpen(false);
-        const res = await fetch(`http://127.0.0.1:8000/api/v1/family/${id}`, {
-            method: 'DELETE',
-        });
-        console.log("RES", res);
+    const deleteFamilyMember = () => {
+        deletePerson(id as number).then(response => {
+            setIsConfirmDeletingFamilyMemberOpen(false);
+            setOpen(false);
+            setEditableModal(false);
+        })
     };
 
     const cancelModal = () => {

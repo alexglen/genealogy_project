@@ -17,17 +17,17 @@ export const HeaderFamilyTree = ({firstName, lastName}: { firstName: string, las
                 {
                     key: '1',
                     label: (
-                        <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
-                            1st menu item
-                        </a>
+                        <Link to="/user">
+                            Личный кабинет
+                        </Link>
                     ),
                 },
                 {
                     key: '2',
                     label: (
-                        <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                            2nd menu item
-                        </a>
+                        <Link to="/trees">
+                            Мои деревья
+                        </Link>
                     ),
                 },
                 {

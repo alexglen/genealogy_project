@@ -1,6 +1,6 @@
 import {IObjectData} from "./models";
 
-export const temporaryData: IObjectData[] = [
+export const temporaryData: any = [
     {
         "id": 9,
         "gender": "M",

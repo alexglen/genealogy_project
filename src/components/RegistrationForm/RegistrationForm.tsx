@@ -1,17 +1,17 @@
 import React from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, NavigateFunction, useNavigate} from 'react-router-dom';
 import {Button, DatePicker, Form, Input, Select, Typography} from 'antd';
 import {IUser} from "../../models";
+import {register} from "../../requests";
 import "./RegistrationForm.scss";
-import {postDataUser} from "../../requests";
 
 const {Option} = Select;
 
-export const RegistrationForm = () => {
-    const navigate = useNavigate();
+export const RegistrationForm: React.FC = () => {
+    const navigate: NavigateFunction = useNavigate();
 
     const registerUser = (body: IUser) => {
-        postDataUser(body).then(({data}: any) => {
+        register(body).then(({data}: any): void => {
             navigate("/successfully-registered", {
                 state: {
                     email: data.email,
@@ -86,7 +86,7 @@ export const RegistrationForm = () => {
 
                 <Form.Item
                     label="Ваше Имя"
-                    name="firstName"
+                    name="username"
                     rules={[
                         {
                             required: true,

@@ -1,17 +1,34 @@
 import React from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, NavigateFunction, useNavigate} from "react-router-dom";
 import {Button, Checkbox, Form, Input, Typography} from "antd";
-import {loginUser} from "../../requests";
+import {getData, loginUser} from "../../requests";
 import {useAuth} from "../../context/authContext";
+import {ILogin} from "../../models";
 
 export const AuthorizationForm = () => {
-    const navigate = useNavigate();
+    const navigate: NavigateFunction = useNavigate();
 
     const {changeAuthStatus} = useAuth() as { changeAuthStatus: (status: boolean) => {} };
 
-    const login = ({firstName, password}: { firstName: string, password: string }) => {
-        loginUser({username: firstName, password}).then(res => res === "ok" && navigate("/tree"));
-        changeAuthStatus(true);
+    const loginHandler = async (data: ILogin) => {
+        const responseLoginUser = await loginUser(data);
+        if (responseLoginUser === "ok") {
+            const responseDataFamily = await getData();
+            console.log("responseDataFamily", responseDataFamily)
+
+            //navigate("/tree");
+            //changeAuthStatus(true);
+        }
+
+
+        // loginUser(data).then(response => {
+        //     if (response === "ok") {
+        //
+        //
+        //         navigate("/tree");
+        //         changeAuthStatus(true);
+        //     }
+        // })
     };
 
     return (
@@ -30,12 +47,12 @@ export const AuthorizationForm = () => {
                 initialValues={{
                     remember: false,
                 }}
-                onFinish={login}
+                onFinish={loginHandler}
                 autoComplete="off"
             >
                 <Form.Item
                     label="Ваше имя"
-                    name="firstName"
+                    name="username"
                     rules={[
                         {
                             required: true,

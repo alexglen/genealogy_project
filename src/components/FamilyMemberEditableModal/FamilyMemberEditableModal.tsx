@@ -2,10 +2,11 @@ import React from "react";
 import {Button, Form, Input, Modal, Radio, Space} from "antd";
 import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
 import {FamilyMemberInfoType} from "../../models";
-import {getDateForFamilyMemberCard} from "../../helpers";
+import {getCookie, getDateForFamilyMemberCard} from "../../helpers";
 import {ConfirmDeletingFamilyMemberModal} from "../ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
 import {FEMALE, MALE} from "../../constants";
 import "./FamilyMemberEditableModal.scss";
+import {createPerson, updatePerson} from "../../requests";
 
 export const FamilyMemberEditableModal = ({
                                               editableModal,
@@ -29,7 +30,6 @@ export const FamilyMemberEditableModal = ({
     } = familyMember;
 
     const {isNewFamilyMember, gender: genderStatus} = editableModal;
-    console.log("genderStatus", genderStatus)
 
     const lifeYears = deathDate ? `(${getDateForFamilyMemberCard(birthDate as string)} - ${getDateForFamilyMemberCard(deathDate)})`
         : `(р. ${getDateForFamilyMemberCard(birthDate as string)})`;
@@ -47,6 +47,45 @@ export const FamilyMemberEditableModal = ({
 
     const titleTextOfNewMemberFamily = genderStatus === MALE ? `${firstName} ${lastName} : добавить отца` : `${firstName} ${lastName}: добавить мать`
     const titleText = !isNewFamilyMember ? `${firstName} ${lastName} ${lifeYears}` : titleTextOfNewMemberFamily;
+
+    const onFinish = ({firstName, lastName, bio}: any) => {
+        if (isNewFamilyMember) {
+            const idUser = getCookie("id");
+            const body = {
+                gender: "M",
+                first_name: firstName,
+                user: idUser,
+                last_name: lastName,
+                maiden_name: null,
+                birth: null,
+                death: null,
+                birth_ca: null,
+                death_ca: null,
+                photo: null,
+                tree_owner: true,
+                father: null,
+                mother: null,
+                bio,
+                spouse: [],
+            }
+
+
+            createPerson(body).then(res => {
+                // @ts-ignore
+                const parentId = res.data.id;
+                setEditableModal(false);
+                // @ts-ignore
+                // @ts-ignore
+                updatePerson({
+                    father: parentId,
+                    user: idUser,
+                    first_name: familyMember.firstName,
+                    gender: familyMember.gender
+                }, id as number).then(res => console.log("RES IN UPDATE", res))
+
+            })
+        }
+    };
 
     // @ts-ignore
     return (
@@ -67,9 +106,11 @@ export const FamilyMemberEditableModal = ({
                         Удалить
                     </Button>
                 ] : [
-                    <Button key="back">
-                        Сохранить
-                    </Button>]}
+                    <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                        <Button type="primary" htmlType="submit">
+                            Создать личность
+                        </Button>
+                    </Form.Item>]}
             >
                 <div>
                     <Form
@@ -86,6 +127,7 @@ export const FamilyMemberEditableModal = ({
 
                         }}
                         autoComplete="off"
+                        onFinish={onFinish}
                     >
                         <Form.Item
                             label="Имя"
@@ -157,14 +199,22 @@ export const FamilyMemberEditableModal = ({
                         >
                             <Input.TextArea/>
                         </Form.Item>
+                        <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                            <Button type="primary" htmlType="submit">
+                                Создать личность
+                            </Button>
+                        </Form.Item>
                     </Form>
                 </div>
-                <div className="avatar">
-                    <FamilyMemberImage img={avatar}/>
-                </div>
+                {/*<div className="avatar">*/}
+                {/*    <FamilyMemberImage img={avatar}/>*/}
+                {/*</div>*/}
+
             </Modal>
             <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
                                               setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
-                                              id={id}/>
+                                              id={id}
+                                              setEditableModal={setEditableModal}
+            />
         </div>)
 }

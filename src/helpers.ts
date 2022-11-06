@@ -10,16 +10,6 @@ export const getDateForFamilyMemberCard = (date: string): string => {
     return `${day} ${month} ${year}`
 }
 
-// export const getYearsOfLife = (birthDate: string, deathDate: string): string => {
-//     const yearOfBirth = new Date(birthDate).getFullYear();
-//     if (deathDate) {
-//         const yearOfDeath = new Date(deathDate).getFullYear();
-//         return `(${yearOfBirth}-${yearOfDeath})`
-//     } else {
-//         return `(р. ${yearOfBirth})`
-//     }
-// }
-
 export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCamelNotationData => {
     const {
         first_name: firstName,
@@ -38,11 +28,13 @@ export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCa
         father,
         gender,
         no_parents: isNoParents,
+        ghost_parent: ghostParents
     } = data;
     return {
         firstName,
         lastName,
         maidenName,
+        ghostParents,
         treeOwner,
         spouse,
         avatar,
@@ -59,17 +51,6 @@ export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCa
         parents: [],
     }
 }
-
-// const addParents = (relative, treeOwnerFamilyMember, convertedArray) => {
-//     if (relative) {
-//         treeOwnerFamilyMember.parents.push(relative);
-//
-//         const granny = convertedArray.find(({id}) => id === relative.mother);
-//         if (granny) {
-//             convertDataMembersFamily(convertedArray, relative)
-//         }
-//     }
-// }
 
 const setNull = (object: IObjectConvertedInCamelNotationData): IObjectConvertedInCamelNotationData => {
     let newObject: any = {};
@@ -114,3 +95,19 @@ export const convertDataMembersFamily =
         }
         return treeOwnerFamilyMember;
     }
+
+
+export const getCookie = (name: string): string | undefined => {
+    let matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
+export const clearAllCookies = (): void => {
+    document.cookie.split(";").forEach(function (string: string) {
+        document.cookie = string.replace(/^ +/, "")
+            .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+    });
+}

@@ -7,6 +7,7 @@ import {
 
 export interface IObjectData {
     "id": number,
+    "ghost_parent": boolean,
     "gender": "M" | "F",
     "first_name": string,
     "last_name": string,
@@ -27,6 +28,7 @@ export interface IObjectData {
 export interface IObjectConvertedInCamelNotationData {
     approximateBirthDate?: string | null,
     approximateDeathDate?: string | null,
+    ghostParents?: boolean,
     avatar?: string | null,
     bio?: string,
     birthDate?: string | null,
@@ -60,7 +62,7 @@ export interface IUser {
     email: string,
     password: string,
     rePassword: string,
-    firstName: string,
+    username: string,
     lastName?: string,
     gender: string,
     date?: string
@@ -75,5 +77,13 @@ export interface IButtonForAddingNewFamilyMember {
 export interface IConfirmDeletingFamilyMemberModal {
     isModalOpen: boolean,
     setIsConfirmDeletingFamilyMemberOpen: (open: boolean) => void,
-    id: number | undefined
+    id: number | undefined,
+    setEditableModal?: any,
+    setOpen?: any
+}
+
+export interface ILogin {
+    username: string,
+    password: string,
+    remember: boolean
 }

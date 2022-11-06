@@ -6,18 +6,25 @@ import {AuthContainer} from "./context/authContext";
 import {ScaleContainer} from "./context/scaleContext";
 import 'antd/dist/antd.css';
 
+import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
+
+const queryClient = new QueryClient()
+
+
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
 root.render(
     <React.StrictMode>
-        <ScaleContainer>
-            <AuthContainer>
-                <BrowserRouter>
-                    <AppRoutes/>
-                </BrowserRouter>
-            </AuthContainer>
-        </ScaleContainer>
+        <QueryClientProvider client={queryClient}>
+            <ScaleContainer>
+                <AuthContainer>
+                    <BrowserRouter>
+                        <AppRoutes/>
+                    </BrowserRouter>
+                </AuthContainer>
+            </ScaleContainer>
+        </QueryClientProvider>
     </React.StrictMode>
 );

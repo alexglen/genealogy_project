@@ -36,8 +36,9 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
     }
 
     const buttonsForAddingParents = new Set<string>([FEMALE, MALE]);
+    console.log('1buttonsForAddingParents', buttonsForAddingParents);
 
-    [{mother, father}].forEach(({mother, father}) => {
+    [{mother: null, father: null}].forEach(({mother, father}) => {
         if (mother) {
             buttonsForAddingParents.delete(FEMALE);
         }
@@ -49,6 +50,8 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
     if (buttonsForAddingParents.size === 0) {
         buttonsForAddingParents.add("empty")
     }
+
+    console.log('buttonsForAddingParents', buttonsForAddingParents)
 
     return (
         <>
@@ -91,6 +94,7 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
                 setEditableModal={setEditableModal}
                 isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
                 setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
+                setOpen={setOpen}
             />
         </>
     )

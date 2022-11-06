@@ -53,11 +53,11 @@ export const FamilyMemberInfo = ({
 
     const status: "Муж" | "Жена" = gender === FEMALE ? "Муж" : "Жена";
     const genderName: "женский" | "мужской" = gender === FEMALE ? "женский" : "мужской";
-    const spouses: IObjectData[] = temporaryData.filter(({id}) => spouse?.includes(id));
-    const spousesNames: string[] | [] = spouses.length > 0 ? spouses.map(({
-                                                                              first_name,
-                                                                              last_name
-                                                                          }) => `${first_name} ${last_name}`) : [];
+   // const spouses: IObjectData[] = temporaryData.filter(({id}) => spouse?.includes(id));
+   // const spousesNames: string[] | [] = spouses.length > 0 ? spouses.map(({
+   //                                                                            first_name,
+   //                                                                            last_name
+   //                                                                        }) => `${first_name} ${last_name}`) : [];
 
     return (
         <div>
@@ -81,9 +81,9 @@ export const FamilyMemberInfo = ({
                 </div>
                 <div>
                     <Space direction="vertical">
-                        <Text>Пол: {genderName}</Text>
-                        {maidenName ? <Text>Девичья фамилия: {maidenName} </Text> : ""}
-                        {spouse?.length as number > 0 ? <Text>{status}: {spousesNames?.join(" ,")}</Text> : null}
+                        {/*<Text>Пол: {genderName}</Text>*/}
+                        {/*{maidenName ? <Text>Девичья фамилия: {maidenName} </Text> : ""}*/}
+                        {/*{spouse?.length as number > 0 ? <Text>{status}: {spousesNames?.join(" ,")}</Text> : null}*/}
                         <Text>Дети: нет</Text>
                         {bio?.length ? <Text strong>Биография:</Text> : ""}
                     </Space>
@@ -94,7 +94,7 @@ export const FamilyMemberInfo = ({
             </Modal>
             <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
                                               setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
-                                              id={id}/>
+                                              id={id} setOpen={setOpen}/>
         </div>
     );
 };

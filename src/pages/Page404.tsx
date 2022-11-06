@@ -7,8 +7,8 @@ export const Page404: React.FC = () => {
 
     return (
         <Result
-            status="403"
-            title="403"
+            status="404"
+            title="404"
             subTitle="Извините, но эта страница не существует!"
             extra={<Button type="primary" onClick={() => navigator("/")}>Вернуться на главную страницу</Button>}
         />

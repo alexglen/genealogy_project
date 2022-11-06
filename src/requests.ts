@@ -1,57 +1,99 @@
 import axios from "axios";
-import {IUser} from "./models";
-import {useNavigate} from "react-router-dom";
+import {ILogin, IUser} from "./models";
+import {clearAllCookies, getCookie} from "./helpers";
 
-export const postDataUser = async ({email, password, rePassword, firstName, lastName, gender, date}: IUser) => {
-    const body = {email, password, re_password: rePassword, firstName, lastName, gender, date, username: firstName};
+export const register = async (data: IUser) => {
+    const body = {...data, re_password: data.rePassword};
     try {
-        return await axios.post('http://127.0.0.1:8000/api/v1/auth/users/', body, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const res = await axios.post('http://127.0.0.1:8000/api/v1/auth/users/', body);
+
+        document.cookie = `userId=${res.data.id}; max-age=3600000`;
+        return res;
     } catch (error) {
         console.log("error in registerUser", error)
     }
 }
 
-// export const activateUser = async ({email, password, rePassword, firstName, lastName, gender, date}: IUser) => {
-//     const body = {email, password, re_password: rePassword, firstName, lastName, gender, date, username: firstName};
-//     try {
-//         return await axios.post('http://127.0.0.1:8000/api/v1/auth/users/', body, {
-//             headers: {
-//                 "Content-Type": "application/json",
-//             },
-//         });
-//     } catch (error) {
-//         console.log("error in registerUser", error)
-//     }
-// }
-
-export const loginUser = async ({username, password}: { username: string, password: string }) => {
+export const loginUser = async ({username, password, remember}: ILogin) => {
     try {
-        const res = await axios.post(' http://127.0.0.1:8000/api/v1/auth/token/login/', {username, password}, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        const response = await axios.post(' http://127.0.0.1:8000/api/v1/auth/token/login/',
+            {username, password});
 
-        const {auth_token} = res.data;
+        const {auth_token} = response.data;
         document.cookie = `token=${auth_token}`;
+        if (remember) {
+            document.cookie = `token=${auth_token}; max-age=3600000`;
+        }
         return "ok";
 
     } catch (error) {
-        console.log("error in loginUser", error)
+        alert("Что-то пошло не так! Возможно вы ввели неверные данные!");
     }
 }
 
 export const logoutUser = async () => {
     try {
-        const res = await axios.post('http://127.0.0.1:8000/api/v1/auth/token/logout/');
-        document.cookie = "";
+        await axios.post('http://127.0.0.1:8000/api/v1/auth/token/logout/', null, {
+            headers: {
+                'Authorization': `Token ${getCookie("token")}`,
+                "Content-Type": "application/json",
+            }
+        });
+        clearAllCookies();
 
     } catch (error) {
-        console.log("error in loginUser", error)
+        console.log("error in loginUser", error);
     }
 }
 
+export const getData = async () => {
+    try {
+        const res = await axios.get("http://127.0.0.1:8000/api/v1/family/", {
+            headers: {
+                'Authorization': `Token ${getCookie("token")}`
+            }
+        })
+        return res.data;
+
+    } catch (error) {
+        console.log('error in getData', error);
+    }
+}
+
+
+export const createPerson = async (body: any) => {
+    try {
+        return await axios.post("http://127.0.0.1:8000/api/v1/family/", body, {
+            headers: {
+                'Authorization': `Token ${getCookie("token")}`
+            }
+        })
+    } catch (error) {
+        console.log('error in createPerson', error);
+    }
+}
+
+
+export const updatePerson = async (body: any, id: number) => {
+    try {
+        await axios.put(`http://127.0.0.1:8000/api/v1/family/${id}/`, body, {
+            headers: {
+                'Authorization': `Token ${getCookie("token")}`
+            }
+        })
+    } catch (error) {
+        console.log('error in createPerson', error);
+    }
+}
+
+export const deletePerson = async (id: number) => {
+    try {
+        return await axios.delete(`http://127.0.0.1:8000/api/v1/family/${id}/`, {
+            headers: {
+                'Authorization': `Token ${getCookie("token")}`
+            }
+        })
+    } catch (error) {
+        alert("Что-то пошло не так! Ошибка при удалении персоны!");
+    }
+}
