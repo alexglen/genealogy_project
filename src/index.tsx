@@ -5,10 +5,11 @@ import {AppRoutes} from "./routes/routes";
 import {AuthContainer} from "./context/authContext";
 import {ScaleContainer} from "./context/scaleContext";
 import 'antd/dist/antd.css';
+import "./index.scss";
 
 import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 
 const root = ReactDOM.createRoot(

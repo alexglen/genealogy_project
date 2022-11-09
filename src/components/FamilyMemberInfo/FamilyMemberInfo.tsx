@@ -26,10 +26,10 @@ export const FamilyMemberInfo = ({
         treeOwner,
         spouse,
         avatar,
-        birthDate,
+        birth,
         id,
         bio,
-        deathDate,
+        death,
         gender,
         parents,
     } = familyMember;
@@ -48,8 +48,8 @@ export const FamilyMemberInfo = ({
         setIsConfirmDeletingFamilyMemberOpen(true);
     }
 
-    const lifeYears = deathDate ? `(${getDateForFamilyMemberCard(birthDate as string)} - ${getDateForFamilyMemberCard(deathDate)})`
-        : `(р. ${getDateForFamilyMemberCard(birthDate as string)})`;
+    const lifeYears = death ? `(${getDateForFamilyMemberCard(birth as string)} - ${getDateForFamilyMemberCard(death)})`
+        : `(р. ${getDateForFamilyMemberCard(birth as string)})`;
 
     const status: "Муж" | "Жена" = gender === FEMALE ? "Муж" : "Жена";
     const genderName: "женский" | "мужской" = gender === FEMALE ? "женский" : "мужской";

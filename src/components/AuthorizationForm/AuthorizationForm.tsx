@@ -14,21 +14,14 @@ export const AuthorizationForm = () => {
         const responseLoginUser = await loginUser(data);
         if (responseLoginUser === "ok") {
             const responseDataFamily = await getData();
-            console.log("responseDataFamily", responseDataFamily)
+            if (responseDataFamily.length) {
+                navigate("/tree");
+            } else {
+                navigate("/create-first-person");
+            }
 
-            //navigate("/tree");
-            //changeAuthStatus(true);
+            changeAuthStatus(true);
         }
-
-
-        // loginUser(data).then(response => {
-        //     if (response === "ok") {
-        //
-        //
-        //         navigate("/tree");
-        //         changeAuthStatus(true);
-        //     }
-        // })
     };
 
     return (

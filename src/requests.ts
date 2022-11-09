@@ -47,6 +47,7 @@ export const logoutUser = async () => {
 }
 
 export const getData = async () => {
+    console.log('GET DATA')
     try {
         const res = await axios.get("http://127.0.0.1:8000/api/v1/family/", {
             headers: {
@@ -75,8 +76,9 @@ export const createPerson = async (body: any) => {
 
 
 export const updatePerson = async (body: any, id: number) => {
+    console.log("BODYYYYYin Updaate", body)
     try {
-        await axios.put(`http://127.0.0.1:8000/api/v1/family/${id}/`, body, {
+        return await axios.put(`http://127.0.0.1:8000/api/v1/family/${id}/`, body, {
             headers: {
                 'Authorization': `Token ${getCookie("token")}`
             }

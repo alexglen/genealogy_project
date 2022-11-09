@@ -6,7 +6,6 @@
   transition: all 1s ease;
   position: relative;
   border: 1px solid #ccc;
-  color: white;
   font-weight: 600;
   font-size: 11px;
 
@@ -32,10 +31,18 @@
 
 }
 
-.male-color {
-  background-color: #2a9d8f;
+.male-dead-color {
+  background-color: #E1F1F6;
 }
 
-.female-color {
-  background-color: #e76f51;
+.male-alive-color {
+  background-color: #BEEBFA;
+}
+
+.female-dead-color {
+  background-color: #FCE2E2;
+}
+
+.female-alive-color {
+  background-color: #FFCDCD;
 }

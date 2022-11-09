@@ -31,8 +31,8 @@ export interface IObjectConvertedInCamelNotationData {
     ghostParents?: boolean,
     avatar?: string | null,
     bio?: string,
-    birthDate?: string | null,
-    deathDate?: string | null,
+    birth?: string | null,
+    death?: string | null,
     father?: number | null,
     firstName?: string | null,
     gender?: "M" | "F",
@@ -44,6 +44,7 @@ export interface IObjectConvertedInCamelNotationData {
     parents?: IObjectConvertedInCamelNotationData[],
     spouse?: number[],
     treeOwner?: boolean,
+    setFamilyTreeData?: any
 }
 
 export type FamilyMemberInfoType = {
@@ -55,7 +56,8 @@ export type FamilyMemberInfoType = {
     isOpenEditableModal?: any
     isConfirmDeletingFamilyMemberOpen: boolean,
     setIsConfirmDeletingFamilyMemberOpen: any,
-    editableModal: any
+    editableModal: any,
+    setFamilyTreeData?: any
 }
 
 export interface IUser {
@@ -70,7 +72,7 @@ export interface IUser {
 
 export interface IButtonForAddingNewFamilyMember {
     gender: string,
-    setEditableModal: any,
+    setAddFamilyMemberModal: any,
     scale: number
 }
 
@@ -79,7 +81,8 @@ export interface IConfirmDeletingFamilyMemberModal {
     setIsConfirmDeletingFamilyMemberOpen: (open: boolean) => void,
     id: number | undefined,
     setEditableModal?: any,
-    setOpen?: any
+    setOpen?: any,
+    setFamilyTreeData?: any
 }
 
 export interface ILogin {

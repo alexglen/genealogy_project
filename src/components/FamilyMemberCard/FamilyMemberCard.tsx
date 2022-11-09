@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ButtonForAddingNewFamilyMember} from "../ButtonForAddingNewFamilyMember/ButtonForAddingNewFamilyMember";
 import {FamilyMemberEditableModal} from "../FamilyMemberEditableModal/FamilyMemberEditableModal";
 import {FamilyMemberInfo} from "../FamilyMemberInfo/FamilyMemberInfo";
@@ -7,6 +7,7 @@ import {IObjectConvertedInCamelNotationData} from "../../models";
 import {FEMALE, FEMALE_BUTTON_COLOR, MALE, MALE_BUTTON_COLOR} from "../../constants";
 import {useScale} from "../../context/scaleContext";
 import "./FamilyMemberCard.scss";
+import {AddFamilyMemberModal} from "../AddFamilyMemberModal/AddFamilyMemberModal";
 
 // @ts-ignore
 export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotationData) => {
@@ -16,7 +17,9 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
         avatar,
         gender,
         mother,
-        father
+        father,
+        setFamilyTreeData,
+        death
     } = familyMember;
 
     const [open, setOpen] = useState<boolean>(false);
@@ -26,19 +29,35 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
         isNewFamilyMember: false,
         gender: ""
     });
+
+    const [addFamilyMemberModal, setAddFamilyMemberModal] =
+        useState<{ isOpenModal: boolean, gender: string }>({
+            isOpenModal: false,
+            gender: ""
+        });
+
+
     const [isConfirmDeletingFamilyMemberOpen, setIsConfirmDeletingFamilyMemberOpen] = useState<boolean>(false);
 
+    useEffect(() => {
+
+    }, [editableModal.isNewFamilyMember])
+
+
     const classes = ["card"];
-    if (gender === MALE) {
-        classes.push('male-color')
+    if (gender === MALE && death) {
+        classes.push('male-dead-color');
+    } else if (gender === MALE && !death) {
+        classes.push('male-alive-color');
+    } else if (gender === FEMALE && death) {
+        classes.push('female-dead-color');
     } else {
-        classes.push('female-color')
+        classes.push('female-alive-color');
     }
 
     const buttonsForAddingParents = new Set<string>([FEMALE, MALE]);
-    console.log('1buttonsForAddingParents', buttonsForAddingParents);
 
-    [{mother: null, father: null}].forEach(({mother, father}) => {
+    [{mother, father}].forEach(({mother, father}) => {
         if (mother) {
             buttonsForAddingParents.delete(FEMALE);
         }
@@ -51,7 +70,7 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
         buttonsForAddingParents.add("empty")
     }
 
-    console.log('buttonsForAddingParents', buttonsForAddingParents)
+    console.log('buttonsForAddingParents', buttonsForAddingParents);
 
     return (
         <>
@@ -72,7 +91,7 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
                                         return <ButtonForAddingNewFamilyMember
                                             key={gender}
                                             gender={gender}
-                                            setEditableModal={setEditableModal} scale={scale}/>
+                                            setAddFamilyMemberModal={setAddFamilyMemberModal} scale={scale}/>
                                     }
                                 }
                             )}
@@ -92,9 +111,13 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
                 editableModal={editableModal}
                 familyMember={familyMember}
                 setEditableModal={setEditableModal}
-                isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
-                setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
                 setOpen={setOpen}
+                setFamilyTreeData={setFamilyTreeData}
+            />
+            <AddFamilyMemberModal addFamilyMemberModal={addFamilyMemberModal}
+                                  setAddFamilyMemberModal={setAddFamilyMemberModal}
+                                  familyMember={familyMember}
+
             />
         </>
     )

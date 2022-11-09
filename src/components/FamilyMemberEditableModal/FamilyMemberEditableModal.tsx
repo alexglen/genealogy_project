@@ -1,12 +1,13 @@
-import React from "react";
-import {Button, Form, Input, Modal, Radio, Space} from "antd";
+import React, {useEffect, useState} from "react";
+import {Button, DatePicker, Form, Input, Modal, Radio, Space} from "antd";
 import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
 import {FamilyMemberInfoType} from "../../models";
 import {getCookie, getDateForFamilyMemberCard} from "../../helpers";
 import {ConfirmDeletingFamilyMemberModal} from "../ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
 import {FEMALE, MALE} from "../../constants";
 import "./FamilyMemberEditableModal.scss";
-import {createPerson, updatePerson} from "../../requests";
+import {createPerson, getData, updatePerson} from "../../requests";
+import moment from "moment";
 
 export const FamilyMemberEditableModal = ({
                                               editableModal,
@@ -14,7 +15,7 @@ export const FamilyMemberEditableModal = ({
                                               setEditableModal,
                                               setIsConfirmDeletingFamilyMemberOpen,
                                               isConfirmDeletingFamilyMemberOpen
-                                          }: FamilyMemberInfoType) => {
+                                          }: any) => {
     const {
         firstName,
         lastName,
@@ -26,7 +27,8 @@ export const FamilyMemberEditableModal = ({
         bio,
         treeOwner,
         parents,
-        id
+        id,
+        setFamilyTreeData
     } = familyMember;
 
     const {isNewFamilyMember, gender: genderStatus} = editableModal;
@@ -47,14 +49,14 @@ export const FamilyMemberEditableModal = ({
 
     const titleTextOfNewMemberFamily = genderStatus === MALE ? `${firstName} ${lastName} : добавить отца` : `${firstName} ${lastName}: добавить мать`
     const titleText = !isNewFamilyMember ? `${firstName} ${lastName} ${lifeYears}` : titleTextOfNewMemberFamily;
+    const genderKey = genderStatus === MALE ? "father" : "mother";
 
     const onFinish = ({firstName, lastName, bio}: any) => {
         if (isNewFamilyMember) {
-            const idUser = getCookie("id");
             const body = {
-                gender: "M",
+                gender: genderStatus,
                 first_name: firstName,
-                user: idUser,
+                user: 46,
                 last_name: lastName,
                 maiden_name: null,
                 birth: null,
@@ -62,27 +64,27 @@ export const FamilyMemberEditableModal = ({
                 birth_ca: null,
                 death_ca: null,
                 photo: null,
-                tree_owner: true,
+                tree_owner: false,
                 father: null,
                 mother: null,
                 bio,
                 spouse: [],
             }
 
-
             createPerson(body).then(res => {
                 // @ts-ignore
-                const parentId = res.data.id;
+                const {id: parentId} = res?.data?.at(0);
                 setEditableModal(false);
                 // @ts-ignore
                 // @ts-ignore
                 updatePerson({
-                    father: parentId,
-                    user: idUser,
+                    [genderKey]: parentId,
+                    user: 46,
                     first_name: familyMember.firstName,
                     gender: familyMember.gender
-                }, id as number).then(res => console.log("RES IN UPDATE", res))
-
+                }, id as number).then(res => {
+                    setFamilyTreeData(res?.data)
+                })
             })
         }
     };
@@ -105,12 +107,7 @@ export const FamilyMemberEditableModal = ({
                             onClick={deleteFamilyMember}>
                         Удалить
                     </Button>
-                ] : [
-                    <Form.Item wrapperCol={{offset: 8, span: 16}}>
-                        <Button type="primary" htmlType="submit">
-                            Создать личность
-                        </Button>
-                    </Form.Item>]}
+                ] : []}
             >
                 <div>
                     <Form
@@ -147,7 +144,6 @@ export const FamilyMemberEditableModal = ({
                             name="lastName"
                             rules={[
                                 {
-                                    required: true,
                                     message: 'Please input your username!',
                                 },
                             ]}
@@ -168,7 +164,7 @@ export const FamilyMemberEditableModal = ({
                             <Input/>
                         </Form.Item>
 
-                        {gender === FEMALE ? <Form.Item
+                        {genderStatus === FEMALE ? <Form.Item
                             label="Девичья фамилия"
                             name="maidenName"
                             rules={[
@@ -180,6 +176,19 @@ export const FamilyMemberEditableModal = ({
                         >
                             <Input/>
                         </Form.Item> : null}
+
+                        <Form.Item
+                            label="Дата рождения"
+                            name="birth"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please input your username!',
+                                },
+                            ]}
+                        >
+                            <DatePicker defaultValue={moment('1990/01/01', 'YYYY/MM')}/>
+                        </Form.Item>
 
                         <Form.Item>
                             <Radio.Group value={isNewFamilyMember ? "" : deathDate ? "dead" : "alive"}>
@@ -199,22 +208,20 @@ export const FamilyMemberEditableModal = ({
                         >
                             <Input.TextArea/>
                         </Form.Item>
-                        <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                        <Form.Item wrapperCol={{offset: 8, span: 16}} className="create-person-button">
                             <Button type="primary" htmlType="submit">
                                 Создать личность
                             </Button>
                         </Form.Item>
                     </Form>
                 </div>
-                {/*<div className="avatar">*/}
-                {/*    <FamilyMemberImage img={avatar}/>*/}
-                {/*</div>*/}
 
             </Modal>
             <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
                                               setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
                                               id={id}
                                               setEditableModal={setEditableModal}
+                                              setFamilyTreeData={setFamilyTreeData}
             />
         </div>)
 }

@@ -8,14 +8,17 @@ export const ConfirmDeletingFamilyMemberModal = ({
                                                      setIsConfirmDeletingFamilyMemberOpen,
                                                      id,
                                                      setEditableModal,
-                                                     setOpen
+                                                     setOpen,
+                                                     setFamilyTreeData
                                                  }: IConfirmDeletingFamilyMemberModal) => {
 
     const deleteFamilyMember = () => {
         deletePerson(id as number).then(response => {
             setIsConfirmDeletingFamilyMemberOpen(false);
-            setOpen(false);
+            // setOpen(false);
             setEditableModal(false);
+            console.log('response in DELETE')
+            setFamilyTreeData(response?.data);
         })
     };
 

@@ -18,12 +18,12 @@ export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCa
         tree_owner: treeOwner,
         spouse,
         photo: avatar,
-        birth: birthDate,
+        birth,
         mother,
         id,
         bio,
         birth_ca: approximateBirthDate,
-        death: deathDate,
+        death,
         death_ca: approximateDeathDate,
         father,
         gender,
@@ -38,12 +38,12 @@ export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCa
         treeOwner,
         spouse,
         avatar,
-        birthDate,
+        birth,
         mother,
         id,
         bio,
         approximateBirthDate,
-        deathDate,
+        death,
         approximateDeathDate,
         father,
         gender,
@@ -74,24 +74,24 @@ export const convertDataMembersFamily =
 
         const mother = convertedArray.find(({id}: any) => treeOwnerFamilyMember.mother === id);
         const father = convertedArray.find(({id}: any) => treeOwnerFamilyMember.father === id);
+        console.log('re-convertedArray', convertedArray)
+        console.log("re-father", father);
+        console.log("re-mother", mother);
+        console.log('re-treeOwnerFamilyMember', treeOwnerFamilyMember)
 
-        if (mother && treeOwnerFamilyMember.parents && father) {
+        if (mother && treeOwnerFamilyMember.parents) {
             treeOwnerFamilyMember.parents.push(mother);
-            const granny = convertedArray.find(({id}: any) => id === father.mother);
+            const granny = convertedArray.find(({id}: any) => id === mother.father);
             if (granny) {
                 convertDataMembersFamily(convertedArray, mother)
             }
         }
         if (father && treeOwnerFamilyMember.parents) {
             treeOwnerFamilyMember.parents.push(father);
-            const granny = convertedArray.find(({id}: any) => id === father.mother);
+            const granny = convertedArray.find(({id}: any) => id === father.father);
             if (granny) {
                 convertDataMembersFamily(convertedArray, father)
             }
-        }
-
-        if (mother?.isNoParents || father?.isNoParents) {
-            convertDataMembersFamily(convertedArray, setNull(father as IObjectConvertedInCamelNotationData))
         }
         return treeOwnerFamilyMember;
     }

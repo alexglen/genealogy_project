@@ -4,17 +4,20 @@ import {Header} from "../../Layouts/Header";
 import {createPerson} from "../../requests";
 import {getCookie} from "../../helpers";
 import "./CreateFirstFamilyMember.scss";
+import {NavigateFunction, useNavigate} from "react-router-dom";
 
 const {Option} = Select;
 
 export const CreateFirstFamilyMember = () => {
 
+    const navigate: NavigateFunction = useNavigate();
+
     const createFirstPerson = ({firstName, lastName, bio, birth, death, maidenName, gender}: any) => {
-        const userId = getCookie("userId");
+        //const userId = getCookie("userId");
         const body = {
             gender,
             first_name: firstName,
-            user: userId,
+            user: 46,
             last_name: lastName,
             maiden_name: maidenName,
             birth: null,
@@ -28,7 +31,12 @@ export const CreateFirstFamilyMember = () => {
             bio,
             spouse: [],
         }
-        createPerson(body).then(res => console.log('RES', res));
+        createPerson(body).then(res => {
+            if (res) {
+                console.log('RES', res);
+                navigate("/tree");
+            }
+        });
     };
 
 
@@ -89,7 +97,7 @@ export const CreateFirstFamilyMember = () => {
 
                 <Form.Item
                     label="Биография"
-                    name="bop"
+                    name="bio"
                     rules={[{required: true, message: 'Please input your password!'}]}
                 >
                     <Input.TextArea/>
