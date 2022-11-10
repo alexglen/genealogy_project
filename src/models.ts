@@ -4,6 +4,7 @@ import {
 import {
     ConfirmDeletingFamilyMemberModal
 } from "./components/ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
+import {AddFamilyMemberModal} from "./components/AddFamilyMemberModal/AddFamilyMemberModal";
 
 export interface IObjectData {
     "id": number,
@@ -89,4 +90,10 @@ export interface ILogin {
     username: string,
     password: string,
     remember: boolean
+}
+
+export interface IAddFamilyMemberModal {
+    addFamilyMemberModal: { isOpenModal: boolean, gender: string },
+    setAddFamilyMemberModal: any,
+    familyMember: IObjectConvertedInCamelNotationData,
 }

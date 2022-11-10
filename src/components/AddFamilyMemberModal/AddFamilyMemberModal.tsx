@@ -1,39 +1,48 @@
 import React, {useState} from "react";
-import {Button, DatePicker, Form, Input, Modal, Radio, Space} from "antd";
-import {FEMALE, MALE} from "../../constants";
+import {Button, DatePicker, DatePickerProps, Form, Input, Modal, Radio} from "antd";
 import {createPerson, updatePerson} from "../../requests";
-import moment from "moment";
+import {IAddFamilyMemberModal, IObjectConvertedInCamelNotationData} from "../../models";
+import {FEMALE, MALE} from "../../constants";
+import "./AddFamilyMemberModal.scss";
 
 export const AddFamilyMemberModal = ({
                                          addFamilyMemberModal,
                                          setAddFamilyMemberModal,
                                          familyMember,
-                                     }: any) => {
+                                     }: IAddFamilyMemberModal) => {
 
-    const {setFamilyTreeData, firstName, id, death, birth, lastName} = familyMember;
+    const {setFamilyTreeData, firstName, id, lastName} = familyMember;
     const {gender: genderOfNewPerson, isOpenModal} = addFamilyMemberModal;
 
     const [isAlive, setIsAlive] = useState<boolean>(true);
+    const [date, setDate] = useState<{ birth: string | null, death: string | null }>({birth: null, death: null});
 
-    const handleCancel = () => {
-        setAddFamilyMemberModal((state: { isOpenModal: boolean }) => ({
-            isOpenModal: false
-        }))
+    const cancelModal = (): void => {
+        setAddFamilyMemberModal({...addFamilyMemberModal, isOpenModal: false});
+    };
+
+    const changeBirthDate: DatePickerProps['onChange'] = (_, dateString) => {
+        setDate({...date, birth: dateString});
+    };
+
+    const changeDeathDate: DatePickerProps['onChange'] = (_, dateString) => {
+        setDate({...date, death: dateString});
     };
 
 
-    const titleText = genderOfNewPerson === MALE ? `${firstName} ${lastName} : добавить отца` : `${firstName} ${lastName}: добавить мать`
+    const titleText = genderOfNewPerson === MALE ? `${firstName} ${lastName} : добавить отца`
+        : `${firstName} ${lastName}: добавить мать`;
     const genderKey = genderOfNewPerson === MALE ? "father" : "mother";
 
-    const onFinish = ({firstName, lastName, bio, maidenName}: any) => {
+    const onFinish = ({firstName, lastName, bio, maidenName}: IObjectConvertedInCamelNotationData) => {
         const body = {
             gender: genderOfNewPerson,
             first_name: firstName,
             last_name: lastName,
             maiden_name: maidenName,
             user: 46,
-            birth: null,
-            death: null,
+            birth: date.birth,
+            death: date.death,
             birth_ca: null,
             death_ca: null,
             photo: null,
@@ -42,15 +51,11 @@ export const AddFamilyMemberModal = ({
             mother: null,
             bio,
             spouse: [],
-        }
+        };
 
         createPerson(body).then(res => {
-            console.log('RES', res)
-            // @ts-ignore
             const {id: parentId} = res?.data?.at(0);
-            setAddFamilyMemberModal(false);
-            // @ts-ignore
-            // @ts-ignore
+            cancelModal();
             updatePerson({
                 [genderKey]: parentId,
                 user: 46,
@@ -66,10 +71,10 @@ export const AddFamilyMemberModal = ({
         <Modal
             open={isOpenModal}
             title={titleText}
-            className="family-member-editable-modal"
-            onCancel={handleCancel}
+            className="add-family-member-modal"
+            onCancel={cancelModal}
             width={460}
-            style={{top: 20}}
+            style={{top: 60}}
             footer={[]}
         >
             <div>
@@ -137,7 +142,7 @@ export const AddFamilyMemberModal = ({
                             },
                         ]}
                     >
-                        <DatePicker/>
+                        <DatePicker onChange={changeBirthDate} name='birth'/>
                     </Form.Item>
 
                     <Form.Item name='isAlive'>
@@ -158,7 +163,7 @@ export const AddFamilyMemberModal = ({
                             },
                         ]}
                     >
-                        <DatePicker/>
+                        <DatePicker onChange={changeDeathDate}/>
                     </Form.Item>}
 
 
