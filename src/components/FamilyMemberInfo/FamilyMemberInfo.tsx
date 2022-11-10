@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Modal, Space, Typography} from 'antd';
 import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
 import {ConfirmDeletingFamilyMemberModal} from "../ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
+import {getData} from "../../requests";
 import {FamilyMemberInfoType, IObjectData} from "../../models";
 import {getDateForFamilyMemberCard} from "../../helpers";
-import {temporaryData} from "../../temporaryData";
-import {FEMALE} from "../../constants";
+import {FEMALE, MALE} from "../../constants";
 import "./FamilyMemberInfo.scss";
 
 const {Text, Paragraph} = Typography;
@@ -24,7 +24,6 @@ export const FamilyMemberInfo = ({
         lastName,
         maidenName,
         treeOwner,
-        spouse,
         avatar,
         birth,
         id,
@@ -34,17 +33,31 @@ export const FamilyMemberInfo = ({
         parents,
     } = familyMember;
 
+    const [children, setChildren] = useState<string[] | []>([]);
+    const [spouse, setSpouse] = useState<string | null>(null);
 
-    const cancelModal = () => {
+    const genderKey = gender === MALE ? "father" : "mother";
+
+    useEffect(() => {
+        getData().then(data => {
+            const childrenObject = data?.filter((person: IObjectData) => id === person[genderKey]);
+            setChildren(childrenObject.map((person: IObjectData) => person.first_name));
+            const parentId = childrenObject.map((person: IObjectData) => gender === MALE ? person["mother"] : person["father"]);
+            const spouses = data.find((person: IObjectData) => parentId.includes(person.id));
+            setSpouse(spouses.first_name);
+        })
+    }, []);
+
+    const cancelModal = (): void => {
         setOpen?.(false);
     };
 
-    const openEditFamilyMemberModal = () => {
+    const openEditFamilyMemberModal = (): void => {
         setOpen?.(false);
-        setEditableModal?.((state: any)=> ({...state, isOpenModal: true}));
+        setEditableModal?.((state: ({ isOpenModal: boolean, gender: string })) => ({...state, isOpenModal: true}));
     }
 
-    const deleteFamilyMember = () => {
+    const openConfirmDeletingFamilyMemberModal = (): void => {
         setIsConfirmDeletingFamilyMemberOpen(true);
     }
 
@@ -53,11 +66,6 @@ export const FamilyMemberInfo = ({
 
     const status: "Муж" | "Жена" = gender === FEMALE ? "Муж" : "Жена";
     const genderName: "женский" | "мужской" = gender === FEMALE ? "женский" : "мужской";
-   // const spouses: IObjectData[] = temporaryData.filter(({id}) => spouse?.includes(id));
-   // const spousesNames: string[] | [] = spouses.length > 0 ? spouses.map(({
-   //                                                                            first_name,
-   //                                                                            last_name
-   //                                                                        }) => `${first_name} ${last_name}`) : [];
 
     return (
         <div>
@@ -70,7 +78,7 @@ export const FamilyMemberInfo = ({
                     <Button key="back" onClick={openEditFamilyMemberModal}>
                         Редактировать
                     </Button>,
-                    <Button key="submit" type="primary" onClick={deleteFamilyMember}
+                    <Button key="submit" type="primary" onClick={openConfirmDeletingFamilyMemberModal}
                             disabled={(treeOwner || parents?.length) as boolean}>
                         Удалить
                     </Button>,
@@ -81,10 +89,10 @@ export const FamilyMemberInfo = ({
                 </div>
                 <div>
                     <Space direction="vertical">
-                        {/*<Text>Пол: {genderName}</Text>*/}
-                        {/*{maidenName ? <Text>Девичья фамилия: {maidenName} </Text> : ""}*/}
-                        {/*{spouse?.length as number > 0 ? <Text>{status}: {spousesNames?.join(" ,")}</Text> : null}*/}
-                        <Text>Дети: нет</Text>
+                        <Text>Пол: {genderName}</Text>
+                        {maidenName ? <Text>Девичья фамилия: {maidenName} </Text> : ""}
+                        <Text>{status}: {spouse ? spouse : "нет"}</Text>
+                        <Text>Дети: {children.length ? children.join(' ') : "нет"}</Text>
                         {bio?.length ? <Text strong>Биография:</Text> : ""}
                     </Space>
                     {bio?.length ? <Paragraph style={{maxHeight: 180, overflowY: "auto"}}>

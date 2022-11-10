@@ -10,7 +10,7 @@ export const getDateForFamilyMemberCard = (date: string): string => {
     return `${day} ${month} ${year}`
 }
 
-export const getLifeYears = (birth: string | null | undefined, death: string | null | undefined) => {
+export const getLifeYears = (birth: string | null, death: string | null) => {
     if (birth && !death) {
         return `р. ${new Date(birth).getFullYear()}`;
     } else if (birth && death) {

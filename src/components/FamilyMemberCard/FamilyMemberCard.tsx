@@ -104,11 +104,11 @@ export const FamilyMemberCard = ({familyMember}: any) => {
 
 
             }/>
-            <FamilyMemberInfo setOpen={setOpen} open={open} familyMember={familyMember}
+            {open ? <FamilyMemberInfo setOpen={setOpen} open={open} familyMember={familyMember}
                               setEditableModal={setEditableModal}
                               isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
                               setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
-                              editableModal={editableModal}/>
+                              editableModal={editableModal}/> : null}
             <FamilyMemberEditableModal
                 editableModal={editableModal}
                 familyMember={familyMember}
