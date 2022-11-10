@@ -1,16 +1,16 @@
 import React, {useEffect, useState} from "react";
+import {AddFamilyMemberModal} from "../AddFamilyMemberModal/AddFamilyMemberModal";
 import {ButtonForAddingNewFamilyMember} from "../ButtonForAddingNewFamilyMember/ButtonForAddingNewFamilyMember";
 import {FamilyMemberEditableModal} from "../FamilyMemberEditableModal/FamilyMemberEditableModal";
 import {FamilyMemberInfo} from "../FamilyMemberInfo/FamilyMemberInfo";
 import {TreeNode} from "react-organizational-chart";
-import {IObjectConvertedInCamelNotationData} from "../../models";
-import {FEMALE, FEMALE_BUTTON_COLOR, MALE, MALE_BUTTON_COLOR} from "../../constants";
 import {useScale} from "../../context/scaleContext";
+import {getLifeYears} from "../../helpers";
+import {IObjectConvertedInCamelNotationData} from "../../models";
+import {FEMALE, MALE} from "../../constants";
 import "./FamilyMemberCard.scss";
-import {AddFamilyMemberModal} from "../AddFamilyMemberModal/AddFamilyMemberModal";
 
-// @ts-ignore
-export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotationData) => {
+export const FamilyMemberCard = ({familyMember}: any) => {
     const {
         firstName,
         lastName,
@@ -19,8 +19,11 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
         mother,
         father,
         setFamilyTreeData,
-        death
+        death,
+        birth
     } = familyMember;
+
+    console.log("!!!!! Important", familyMember);
 
     const [open, setOpen] = useState<boolean>(false);
     const {scale} = useScale() as { scale: number };
@@ -70,14 +73,13 @@ export const FamilyMemberCard = ({familyMember}: IObjectConvertedInCamelNotation
         buttonsForAddingParents.add("empty")
     }
 
-    console.log('buttonsForAddingParents', buttonsForAddingParents);
-
     return (
         <>
             <TreeNode label={
                 <div>
-                    <div className={classes.join(" ")} style={{height: 120 * scale, width: 75 * scale}}>
-                        <p style={{fontSize: 12}}>{firstName}</p>
+                    <div className={classes.join(" ")} style={{height: 160 * scale, width: 90 * scale}}>
+                        <p style={{fontSize: 14}}>{firstName}</p>
+                        <p style={{fontSize: 12}}>{getLifeYears(birth, death)}</p>
                         {avatar ? <img src={avatar} alt="avatar" onClick={() => setOpen(true)}/>
                             : <img alt="avatar"
                                    src={"https://orgs.ncsu.edu/student-govt/wp-content/uploads/sites/8/2014/07/EMPTY1.png"}

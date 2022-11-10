@@ -10,6 +10,15 @@ export const getDateForFamilyMemberCard = (date: string): string => {
     return `${day} ${month} ${year}`
 }
 
+export const getLifeYears = (birth: string | null | undefined, death: string | null | undefined) => {
+    if (birth && !death) {
+        return `р. ${new Date(birth).getFullYear()}`;
+    } else if (birth && death) {
+        return `${new Date(birth).getFullYear()} - ${new Date(death).getFullYear()}`
+    }
+}
+
+
 export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCamelNotationData => {
     const {
         first_name: firstName,
@@ -52,32 +61,12 @@ export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCa
     }
 }
 
-const setNull = (object: IObjectConvertedInCamelNotationData): IObjectConvertedInCamelNotationData => {
-    let newObject: any = {};
-    for (let key in object) {
-        if (["bio", "firstName", "lastName"].includes(key)) {
-            newObject[key] = "";
-        } else if (key === "gender") {
-            newObject[key] = object[key]
-        } else if (["isNoParents", "treeOwner"].includes(key)) {
-            newObject[key] = false;
-        } else {
-            newObject[key] = null;
-        }
-    }
-    return newObject;
-}
-
 export const convertDataMembersFamily =
     (convertedArray: IObjectConvertedInCamelNotationData[], treeOwnerFamilyMember: IObjectConvertedInCamelNotationData):
         IObjectConvertedInCamelNotationData => {
 
         const mother = convertedArray.find(({id}: any) => treeOwnerFamilyMember.mother === id);
         const father = convertedArray.find(({id}: any) => treeOwnerFamilyMember.father === id);
-        console.log('re-convertedArray', convertedArray)
-        console.log("re-father", father);
-        console.log("re-mother", mother);
-        console.log('re-treeOwnerFamilyMember', treeOwnerFamilyMember)
 
         if (mother && treeOwnerFamilyMember.parents) {
             treeOwnerFamilyMember.parents.push(mother);

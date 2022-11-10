@@ -3,8 +3,8 @@ import {TreeNode} from "react-organizational-chart";
 import {FamilyMemberCard} from "../components/FamilyMemberCard/FamilyMemberCard";
 import {IObjectConvertedInCamelNotationData} from "../models";
 
-export const RecursiveTreeNode: any = (props: IObjectConvertedInCamelNotationData) => {
-    console.log('PROPS', props)
+export const RecursiveTreeNode1: any = (props: IObjectConvertedInCamelNotationData) => {
+    console.log('count', props)
     return (
         // @ts-ignore
         <TreeNode label={<div style={{width: "80%", margin: "0 auto"}}><FamilyMemberCard familyMember={props}/></div>}>
@@ -13,6 +13,6 @@ export const RecursiveTreeNode: any = (props: IObjectConvertedInCamelNotationDat
                                    key={familyMember.id}/>) : null}
         </TreeNode>
     )
-}
+};
 
-
+export const RecursiveTreeNode = React.memo(RecursiveTreeNode1);

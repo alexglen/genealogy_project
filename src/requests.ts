@@ -47,7 +47,6 @@ export const logoutUser = async () => {
 }
 
 export const getData = async () => {
-    console.log('GET DATA')
     try {
         const res = await axios.get("http://127.0.0.1:8000/api/v1/family/", {
             headers: {
@@ -56,8 +55,8 @@ export const getData = async () => {
         })
         return res.data;
 
-    } catch (error) {
-        console.log('error in getData', error);
+    } catch (error: any) {
+        throw Error(error);
     }
 }
 

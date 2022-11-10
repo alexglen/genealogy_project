@@ -1,49 +1,50 @@
 import React, {useEffect, useState} from "react";
+import {ErrorComponent} from "../components/ErrorComponent/ErrorComponent";
 import {HeaderFamilyTree} from "../components/HeaderFamilyTree/HeaderFamilyTree";
+import {Loading} from "../components/Loading/Loading";
+import {ScaleForm} from "../components/ScaleForm/ScaleForm";
 import {RecursiveTreeNode} from "./RecursiveTreeNode";
 import {Tree} from 'react-organizational-chart';
-import {ScaleForm} from "../components/ScaleForm/ScaleForm";
+import {getData} from "../requests";
+import {Typography} from "antd";
 import {IObjectConvertedInCamelNotationData, IObjectData} from "../models";
 import {convertDataMemberFamily, convertDataMembersFamily} from "../helpers";
-import {Typography} from "antd";
-import {getData} from "../requests";
-import {useQuery} from "react-query";
-import {Loading} from "../components/Loading/Loading";
 
-export const FamilyTreePage = () => {
-
-    const [data, setData] = useState([]);
-    const [familyTreeData, setFamilyTreeData] = useState<any>({});
+export const FamilyTreePage: React.FC = () => {
+    const [data, setData] = useState<IObjectData[]>([]);
+    const [familyTreeData, setFamilyTreeData] = useState<IObjectConvertedInCamelNotationData>({});
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<null | string>(null);
 
     useEffect(() => {
-        getData().then((res) => {
-            setData(res);
+        getData().then((response) => {
+            setIsLoading(true);
+            setData(response);
             if (data.length) {
                 const dataInCamelNotation: IObjectConvertedInCamelNotationData[] =
                     data.map((memberFamily: IObjectData) => convertDataMemberFamily(memberFamily));
 
-                console.log("dataInCamelNotation", dataInCamelNotation)
-
                 const treeOwnerFamilyMember: IObjectConvertedInCamelNotationData =
                     dataInCamelNotation.find(({treeOwner}: IObjectConvertedInCamelNotationData) => treeOwner) as IObjectConvertedInCamelNotationData;
-                console.log("treeOwnerFamilyMember", treeOwnerFamilyMember)
 
-                const convertedDataMembersFamily: any =
+                const convertedDataMembersFamily: IObjectConvertedInCamelNotationData =
                     convertDataMembersFamily(dataInCamelNotation, treeOwnerFamilyMember);
                 setFamilyTreeData(convertedDataMembersFamily);
-
-                console.log('convertedDataMembersFamily', convertedDataMembersFamily)
+                setIsLoading(false);
             }
-        })
+        }).catch(({message}) => {
+            setError(`Что-то пошло не так: ${message}`);
+        });
     }, [data.length]);
 
 
-    console.log('familyTreeData', familyTreeData)
+    if (isLoading) {
+        return <Loading/>;
+    }
 
-    //
-    // if (isLoading) {
-    //     return <Loading/>
-    // }
+    if (error) {
+        return <ErrorComponent errorText={error}/>;
+    }
 
     return (
         <div>
@@ -56,5 +57,4 @@ export const FamilyTreePage = () => {
             <ScaleForm/>
         </div>
     )
-}
-
+};
