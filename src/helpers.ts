@@ -1,4 +1,5 @@
 import {IObjectConvertedInCamelNotationData, IObjectData} from "./models";
+import {FEMALE, MALE} from "./constants";
 
 export const getDateForFamilyMemberCard = (date: string): string => {
     const fullDate = new Date(date);
@@ -100,3 +101,37 @@ export const clearAllCookies = (): void => {
             .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
     });
 }
+
+export const getClassesForFamilyMemberCard = (gender: string, death: string | null): string => {
+    const cls = ["card"];
+
+    if (gender === MALE && death) {
+        cls.push('male-dead-color');
+    } else if (gender === MALE && !death) {
+        cls.push('male-alive-color');
+    } else if (gender === FEMALE && death) {
+        cls.push('female-dead-color');
+    } else {
+        cls.push('female-alive-color');
+    }
+    return cls.join(' ')
+}
+
+export const getButtonsForAddingParents = (mother: string | null, father: string | null): string[] => {
+    const buttonsForAddingParents = new Set<string>([FEMALE, MALE]);
+
+    [{mother, father}].forEach(({mother, father}) => {
+        if (mother) {
+            buttonsForAddingParents.delete(FEMALE);
+        }
+        if (father) {
+            buttonsForAddingParents.delete(MALE);
+        }
+    })
+    if (buttonsForAddingParents.size === 0) {
+        buttonsForAddingParents.add("empty")
+    }
+    return Array.from(buttonsForAddingParents);
+}
+
+
