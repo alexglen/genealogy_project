@@ -12,3 +12,12 @@
   display: flex;
   justify-content: center;
 }
+
+.buttons {
+  display: flex;
+  justify-content: end;
+
+  .delete-button {
+    margin-right: 10px;
+  }
+}

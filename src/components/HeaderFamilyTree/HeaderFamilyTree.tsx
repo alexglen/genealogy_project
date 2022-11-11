@@ -17,7 +17,7 @@ export const HeaderFamilyTree = ({firstName, lastName}: { firstName: string, las
                 {
                     key: '1',
                     label: (
-                        <Link to="/user">
+                        <Link to="/profile">
                             Личный кабинет
                         </Link>
                     ),

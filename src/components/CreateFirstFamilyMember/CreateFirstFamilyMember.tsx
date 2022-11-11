@@ -1,19 +1,16 @@
 import React from "react";
+import {NavigateFunction, useNavigate} from "react-router-dom";
 import {Button, DatePicker, Form, Input, Select} from 'antd';
 import {Header} from "../../Layouts/Header";
 import {createPerson} from "../../requests";
-import {getCookie} from "../../helpers";
 import "./CreateFirstFamilyMember.scss";
-import {NavigateFunction, useNavigate} from "react-router-dom";
 
 const {Option} = Select;
 
-export const CreateFirstFamilyMember = () => {
-
+export const CreateFirstFamilyMember: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
 
     const createFirstPerson = ({firstName, lastName, bio, birth, death, maidenName, gender}: any) => {
-        //const userId = getCookie("userId");
         const body = {
             gender,
             first_name: firstName,
@@ -54,7 +51,7 @@ export const CreateFirstFamilyMember = () => {
                 <Form.Item
                     label="Ваше имя"
                     name="firstName"
-                    rules={[{required: true, message: 'Please input your username!'}]}
+                    rules={[{required: true, message: 'Напишите Ваше имя!'}]}
                 >
                     <Input/>
                 </Form.Item>
@@ -62,7 +59,6 @@ export const CreateFirstFamilyMember = () => {
                 <Form.Item
                     label="Ваша фамилия"
                     name="lastName"
-                    rules={[{required: true, message: 'Please input your password!'}]}
                 >
                     <Input/>
                 </Form.Item>
@@ -82,7 +78,6 @@ export const CreateFirstFamilyMember = () => {
                 <Form.Item
                     label="Девичья фамилия"
                     name="maidenName"
-                    rules={[{required: false, message: 'Please input your password!'}]}
                 >
                     <Input/>
                 </Form.Item>
@@ -98,7 +93,6 @@ export const CreateFirstFamilyMember = () => {
                 <Form.Item
                     label="Биография"
                     name="bio"
-                    rules={[{required: true, message: 'Please input your password!'}]}
                 >
                     <Input.TextArea/>
                 </Form.Item>
@@ -112,6 +106,3 @@ export const CreateFirstFamilyMember = () => {
         </Header>
     );
 }
-
-
-//  Фото Биография

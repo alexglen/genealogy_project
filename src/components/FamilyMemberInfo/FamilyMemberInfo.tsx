@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Modal, Space, Typography} from 'antd';
-import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
+import {Avatar, Button, Modal, Space, Typography} from 'antd';
+import {UserOutlined} from "@ant-design/icons";
 import {ConfirmDeletingFamilyMemberModal} from "../ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
 import {getData} from "../../requests";
 import {FamilyMemberInfoType, IObjectData} from "../../models";
@@ -15,7 +15,7 @@ export const FamilyMemberInfo = ({
                                      setOpen,
                                      open,
                                      familyMember,
-                                     setEditableModal,
+                                     setOpenEditableModal,
                                      isConfirmDeletingFamilyMemberOpen,
                                      setIsConfirmDeletingFamilyMemberOpen
                                  }: FamilyMemberInfoType) => {
@@ -31,6 +31,7 @@ export const FamilyMemberInfo = ({
         death,
         gender,
         parents,
+        setFamilyTreeData
     } = familyMember;
 
     const [children, setChildren] = useState<string[] | []>([]);
@@ -44,7 +45,7 @@ export const FamilyMemberInfo = ({
             setChildren(childrenObject.map((person: IObjectData) => person.first_name));
             const parentId = childrenObject.map((person: IObjectData) => gender === MALE ? person["mother"] : person["father"]);
             const spouses = data.find((person: IObjectData) => parentId.includes(person.id));
-            setSpouse(spouses.first_name);
+            setSpouse(spouses?.first_name);
         })
     }, []);
 
@@ -54,7 +55,7 @@ export const FamilyMemberInfo = ({
 
     const openEditFamilyMemberModal = (): void => {
         setOpen?.(false);
-        setEditableModal?.((state: ({ isOpenModal: boolean, gender: string })) => ({...state, isOpenModal: true}));
+        setOpenEditableModal?.(true);
     }
 
     const openConfirmDeletingFamilyMemberModal = (): void => {
@@ -85,7 +86,7 @@ export const FamilyMemberInfo = ({
                 ]}
             >
                 <div className="avatar">
-                    <FamilyMemberImage img={avatar}/>
+                    <Avatar size={80} icon={<UserOutlined/>} src={avatar}/>
                 </div>
                 <div>
                     <Space direction="vertical">
@@ -100,9 +101,10 @@ export const FamilyMemberInfo = ({
                     </Paragraph> : ""}
                 </div>
             </Modal>
-            <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
-                                              setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
-                                              id={id} setOpen={setOpen}/>
+            {isConfirmDeletingFamilyMemberOpen ?
+                <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
+                                                  setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
+                                                  id={id} setOpen={setOpen} setFamilyTreeData={setFamilyTreeData}/> : null}
         </div>
     );
 };

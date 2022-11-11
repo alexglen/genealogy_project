@@ -5,7 +5,7 @@ import {getData, loginUser} from "../../requests";
 import {useAuth} from "../../context/authContext";
 import {ILogin} from "../../models";
 
-export const AuthorizationForm = () => {
+export const AuthorizationForm: React.FC = () => {
     const navigate: NavigateFunction = useNavigate();
 
     const {changeAuthStatus} = useAuth() as { changeAuthStatus: (status: boolean) => {} };
@@ -15,7 +15,7 @@ export const AuthorizationForm = () => {
         if (responseLoginUser === "ok") {
             const responseDataFamily = await getData();
             if (responseDataFamily.length) {
-                navigate("/tree");
+                navigate(`/trees/водкин`);
             } else {
                 navigate("/create-first-person");
             }

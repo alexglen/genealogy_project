@@ -19,7 +19,6 @@ export const getLifeYears = (birth: string | null, death: string | null) => {
     }
 }
 
-
 export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCamelNotationData => {
     const {
         first_name: firstName,
@@ -38,7 +37,7 @@ export const convertDataMemberFamily = (data: IObjectData): IObjectConvertedInCa
         father,
         gender,
         no_parents: isNoParents,
-        ghost_parent: ghostParents
+        ghost_parent: ghostParents,
     } = data;
     return {
         firstName,
@@ -69,19 +68,14 @@ export const convertDataMembersFamily =
         const mother = convertedArray.find(({id}: any) => treeOwnerFamilyMember.mother === id);
         const father = convertedArray.find(({id}: any) => treeOwnerFamilyMember.father === id);
 
-        if (mother && treeOwnerFamilyMember.parents) {
-            treeOwnerFamilyMember.parents.push(mother);
-            const granny = convertedArray.find(({id}: any) => id === mother.father);
-            if (granny) {
-                convertDataMembersFamily(convertedArray, mother)
-            }
+        if (father) {
+            treeOwnerFamilyMember.parents?.push(father);
+            convertDataMembersFamily(convertedArray, father)
         }
-        if (father && treeOwnerFamilyMember.parents) {
-            treeOwnerFamilyMember.parents.push(father);
-            const granny = convertedArray.find(({id}: any) => id === father.father);
-            if (granny) {
-                convertDataMembersFamily(convertedArray, father)
-            }
+
+        if (mother) {
+            treeOwnerFamilyMember.parents?.push(mother);
+            convertDataMembersFamily(convertedArray, mother)
         }
         return treeOwnerFamilyMember;
     }

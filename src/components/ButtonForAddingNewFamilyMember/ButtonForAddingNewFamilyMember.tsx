@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import {Button} from "antd";
 import {IButtonForAddingNewFamilyMember} from "../../models";
 import {PlusCircleFilled} from "@ant-design/icons";
@@ -13,9 +13,6 @@ export const ButtonForAddingNewFamilyMember = ({
     const color = gender === MALE ? FEMALE_BUTTON_COLOR : MALE_BUTTON_COLOR;
 
     return <Button shape="circle" icon={<PlusCircleFilled/>} style={{color: color}}
-                   onClick={() => setAddFamilyMemberModal((state: { isOpenModal: boolean }) => ({
-                       isOpenModal: true,
-                       gender
-                   }))} className="button-for-adding" size={size}/>
+                   onClick={() => setAddFamilyMemberModal({gender, isOpenModal: true})}
+                   className="button-for-adding" size={size}/>
 }
-

@@ -1,11 +1,3 @@
-import {
-    ButtonForAddingNewFamilyMember
-} from "./components/ButtonForAddingNewFamilyMember/ButtonForAddingNewFamilyMember";
-import {
-    ConfirmDeletingFamilyMemberModal
-} from "./components/ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
-import {AddFamilyMemberModal} from "./components/AddFamilyMemberModal/AddFamilyMemberModal";
-
 export interface IObjectData {
     "id": number,
     "ghost_parent": boolean,
@@ -45,19 +37,18 @@ export interface IObjectConvertedInCamelNotationData {
     parents?: IObjectConvertedInCamelNotationData[],
     spouse?: number[],
     treeOwner?: boolean,
-    setFamilyTreeData?: any
+    setFamilyTreeData?: any,
+    setWasDataChanged?: any
 }
 
 export type FamilyMemberInfoType = {
     setOpen?: (open: boolean) => any,
     open?: boolean,
     familyMember: IObjectConvertedInCamelNotationData,
-    setEditableModal?: any,
-    openEditableModal?: any,
-    isOpenEditableModal?: any
+    setOpenEditableModal?: any,
+    isOpenEditableModal?: boolean,
     isConfirmDeletingFamilyMemberOpen: boolean,
     setIsConfirmDeletingFamilyMemberOpen: any,
-    editableModal: any,
     setFamilyTreeData?: any
 }
 
@@ -81,7 +72,7 @@ export interface IConfirmDeletingFamilyMemberModal {
     isModalOpen: boolean,
     setIsConfirmDeletingFamilyMemberOpen: (open: boolean) => void,
     id: number | undefined,
-    setEditableModal?: any,
+    setOpenEditableModal?: any,
     setOpen?: any,
     setFamilyTreeData?: any
 }
@@ -96,4 +87,14 @@ export interface IAddFamilyMemberModal {
     addFamilyMemberModal: { isOpenModal: boolean, gender: string },
     setAddFamilyMemberModal: any,
     familyMember: IObjectConvertedInCamelNotationData,
+}
+
+export interface IFamilyMemberEditableModal {
+    isOpenEditableModal: boolean,
+    familyMember: IObjectConvertedInCamelNotationData,
+    setOpenEditableModal: any,
+    setIsConfirmDeletingFamilyMemberOpen: any,
+    isConfirmDeletingFamilyMemberOpen: boolean,
+    setOpen: any,
+    setFamilyTreeData: any
 }

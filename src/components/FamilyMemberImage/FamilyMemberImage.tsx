@@ -1,50 +1,23 @@
-import React, { useState } from 'react';
-import { Upload } from 'antd';
+import React from 'react';
+import {Upload} from 'antd';
 import ImgCrop from 'antd-img-crop';
-import "./FamilyMemberImage.scss";
 
-export const FamilyMemberImage = ({img}: any) => {
-    const [fileList, setFileList] = useState([
-        {
-            uid: '-1',
-            name: 'image.png',
-            status: 'done',
-            url: img ?? 'https://orgs.ncsu.edu/student-govt/wp-content/uploads/sites/8/2014/07/EMPTY1.png',
-        },
-    ]);
+export const FamilyMemberImage = ({avatar, setAvatar}: any) => {
 
-    const onChange = ({ fileList: newFileList }: any) => {
-        setFileList(newFileList);
-    };
-
-    const onPreview = async (file: any) => {
-        let src = file.url;
-
-        if (!src) {
-            src = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file.originFileObj);
-
-                reader.onload = () => resolve(reader.result);
-            });
-        }
-
-        const image = new Image();
-        image.src = src;
-        const imgWindow = window.open(src);
-        imgWindow?.document.write(image.outerHTML);
+    const onChange = ({fileList: newFileList}: any) => {
+        setAvatar(newFileList);
     };
 
     return (
-        <ImgCrop rotate>
+        <ImgCrop>
             <Upload
                 action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                className="upload-avatar"
                 listType="picture-card"
-                // fileList={fileList}
+                fileList={avatar}
                 onChange={onChange}
-                onPreview={onPreview}
             >
-                {fileList.length < 5 && '+ Upload'}
+                {avatar.length < 1 && '+ Аватар'}
             </Upload>
         </ImgCrop>
     );

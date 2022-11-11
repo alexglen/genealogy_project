@@ -7,6 +7,7 @@ import {TreeNode} from "react-organizational-chart";
 import {useScale} from "../../context/scaleContext";
 import {getButtonsForAddingParents, getClassesForFamilyMemberCard, getLifeYears} from "../../helpers";
 import {IObjectConvertedInCamelNotationData} from "../../models";
+import {MALE} from "../../constants";
 import "./FamilyMemberCard.scss";
 
 export const FamilyMemberCard = ({familyMember}: { familyMember: IObjectConvertedInCamelNotationData }) => {
@@ -19,17 +20,14 @@ export const FamilyMemberCard = ({familyMember}: { familyMember: IObjectConverte
         father,
         setFamilyTreeData,
         death,
-        birth
+        birth,
     } = familyMember;
 
     const {scale} = useScale() as { scale: number };
 
     const [openFamilyMemberInfoModal, setFamilyMemberInfoModal] = useState<boolean>(false);
 
-    const [editableModal, setEditableModal] = useState<{ isOpenModal: boolean, gender: string }>({
-        isOpenModal: false,
-        gender: ""
-    });
+    const [isOpenEditableModal, setOpenEditableModal] = useState<boolean>(false);
 
     const [addFamilyMemberModal, setAddFamilyMemberModal] =
         useState<{ isOpenModal: boolean, gender: string }>({
@@ -46,16 +44,17 @@ export const FamilyMemberCard = ({familyMember}: { familyMember: IObjectConverte
                     <div className={getClassesForFamilyMemberCard(gender as string, death as string | null)}
                          style={{height: 160 * scale, width: 90 * scale}}>
                         <p style={{fontSize: 14}}>{firstName}</p>
-                        <p style={{fontSize: 12}}>{getLifeYears(birth as string | null, death as string | null)}</p>
+                        <p style={{fontSize: 12}}>{(birth || death) ? getLifeYears(birth as string | null, death as string | null) : "Годы жизни ?"}</p>
                         {avatar ? <img src={avatar} alt="avatar" onClick={() => setFamilyMemberInfoModal(true)}/>
                             : <img alt="avatar"
-                                   src={"https://orgs.ncsu.edu/student-govt/wp-content/uploads/sites/8/2014/07/EMPTY1.png"}
+                                   src={gender === MALE ? "https://orgs.ncsu.edu/student-govt/wp-content/uploads/sites/8/2014/07/EMPTY1.png"
+                                       : "https://mamushki.ru/wp-content/uploads/2020/11/team_fpo-woman-1100x1100.png"}
                                    onClick={() => setFamilyMemberInfoModal(true)}/>}
 
                         <div className="buttons-for-adding">
                             {getButtonsForAddingParents(mother as string | null, father as string | null).map(gender => {
                                     if (gender === "empty") {
-                                        return <p style={{fontSize: 12}} key={gender}>{lastName}</p>
+                                        return <p style={{fontSize: 14}} key={gender}>{lastName}</p>
                                     } else {
                                         return <ButtonForAddingNewFamilyMember
                                             key={gender}
@@ -65,6 +64,7 @@ export const FamilyMemberCard = ({familyMember}: { familyMember: IObjectConverte
                                 }
                             )}
                         </div>
+                        {/*{scale > 1.5 ? (<p>{"Hola"}</p>) : null}*/}
                     </div>
 
                 </div>
@@ -74,16 +74,18 @@ export const FamilyMemberCard = ({familyMember}: { familyMember: IObjectConverte
             {openFamilyMemberInfoModal ?
                 <FamilyMemberInfo setOpen={setFamilyMemberInfoModal} open={openFamilyMemberInfoModal}
                                   familyMember={familyMember}
-                                  setEditableModal={setEditableModal}
+                                  setOpenEditableModal={setOpenEditableModal}
                                   isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
                                   setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
-                                  editableModal={editableModal}/> : null}
-            {editableModal.isOpenModal ? <FamilyMemberEditableModal
-                editableModal={editableModal}
+                                  isOpenEditableModal={isOpenEditableModal}/> : null}
+            {isOpenEditableModal ? <FamilyMemberEditableModal
+                isOpenEditableModal={isOpenEditableModal}
                 familyMember={familyMember}
-                setEditableModal={setEditableModal}
+                setOpenEditableModal={setOpenEditableModal}
                 setOpen={setFamilyMemberInfoModal}
                 setFamilyTreeData={setFamilyTreeData}
+                isConfirmDeletingFamilyMemberOpen={isConfirmDeletingFamilyMemberOpen}
+                setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
             /> : null}
             {addFamilyMemberModal.isOpenModal ? <AddFamilyMemberModal addFamilyMemberModal={addFamilyMemberModal}
                                                                       setAddFamilyMemberModal={setAddFamilyMemberModal}

@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {Button, DatePicker, DatePickerProps, Form, Input, Modal, Radio} from "antd";
+import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
 import {createPerson, updatePerson} from "../../requests";
 import {IAddFamilyMemberModal, IObjectConvertedInCamelNotationData} from "../../models";
 import {FEMALE, MALE} from "../../constants";
@@ -16,6 +17,7 @@ export const AddFamilyMemberModal = ({
 
     const [isAlive, setIsAlive] = useState<boolean>(true);
     const [date, setDate] = useState<{ birth: string | null, death: string | null }>({birth: null, death: null});
+    const [avatar, setAvatar] = useState([]);
 
     const cancelModal = (): void => {
         setAddFamilyMemberModal({...addFamilyMemberModal, isOpenModal: false});
@@ -29,12 +31,11 @@ export const AddFamilyMemberModal = ({
         setDate({...date, death: dateString});
     };
 
-
     const titleText = genderOfNewPerson === MALE ? `${firstName} ${lastName} : добавить отца`
         : `${firstName} ${lastName}: добавить мать`;
     const genderKey = genderOfNewPerson === MALE ? "father" : "mother";
 
-    const onFinish = ({firstName, lastName, bio, maidenName}: IObjectConvertedInCamelNotationData) => {
+    const onFinish = ({firstName, lastName, bio, maidenName, avatar}: IObjectConvertedInCamelNotationData) => {
         const body = {
             gender: genderOfNewPerson,
             first_name: firstName,
@@ -51,6 +52,7 @@ export const AddFamilyMemberModal = ({
             mother: null,
             bio,
             spouse: [],
+            avatar
         };
 
         createPerson(body).then(res => {
@@ -74,8 +76,8 @@ export const AddFamilyMemberModal = ({
             className="add-family-member-modal"
             onCancel={cancelModal}
             width={460}
-            style={{top: 60}}
-            footer={[]}
+            style={{top: 20}}
+            footer={false}
         >
             <div>
                 <Form
@@ -92,7 +94,17 @@ export const AddFamilyMemberModal = ({
                     }}
                     autoComplete="off"
                     onFinish={onFinish}
+                    className="add-family-member-modal"
                 >
+
+                    <Form.Item
+                        label="Аватар"
+                        name="avatar"
+                        className='avatar'
+                    >
+                        <FamilyMemberImage avatar={avatar} setAvatar={setAvatar}/>
+                    </Form.Item>
+
                     <Form.Item
                         label="Имя"
                         name="firstName"
@@ -109,12 +121,6 @@ export const AddFamilyMemberModal = ({
                     <Form.Item
                         label="Фамилия"
                         name="lastName"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Вы забыли указать фамилию',
-                            },
-                        ]}
                     >
                         <Input/>
                     </Form.Item>
@@ -122,12 +128,6 @@ export const AddFamilyMemberModal = ({
                     {genderOfNewPerson === FEMALE ? <Form.Item
                         label="Девичья фамилия"
                         name="maidenName"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Вы забыли указать девичью фамилию',
-                            },
-                        ]}
                     >
                         <Input/>
                     </Form.Item> : null}
@@ -135,12 +135,6 @@ export const AddFamilyMemberModal = ({
                     <Form.Item
                         label="Дата рождения"
                         name="birth"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Пожалуйста, напишите дату рождения',
-                            },
-                        ]}
                     >
                         <DatePicker onChange={changeBirthDate} name='birth'/>
                     </Form.Item>
@@ -156,16 +150,9 @@ export const AddFamilyMemberModal = ({
                     {!isAlive && <Form.Item
                         label="Дата смерти"
                         name="death"
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Пожалуйста, напишите дату рождения',
-                            },
-                        ]}
                     >
                         <DatePicker onChange={changeDeathDate}/>
                     </Form.Item>}
-
 
                     <p>Биография: </p>
                     <Form.Item
@@ -173,13 +160,12 @@ export const AddFamilyMemberModal = ({
                         rules={[
                             {
                                 required: false,
-                                message: 'Please input your username!',
                             },
                         ]}
                     >
                         <Input.TextArea/>
                     </Form.Item>
-                    <Form.Item wrapperCol={{offset: 14, span: 16}}>
+                    <Form.Item wrapperCol={{offset: 15, span: 16}}>
                         <Button type="primary" htmlType="submit">
                             Создать личность
                         </Button>

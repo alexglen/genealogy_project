@@ -3,7 +3,7 @@ import {ErrorComponent} from "../components/ErrorComponent/ErrorComponent";
 import {HeaderFamilyTree} from "../components/HeaderFamilyTree/HeaderFamilyTree";
 import {Loading} from "../components/Loading/Loading";
 import {ScaleForm} from "../components/ScaleForm/ScaleForm";
-import {RecursiveTreeNode} from "./RecursiveTreeNode";
+import {RecursiveTreeNode} from "../components/RecursiveTreeNode/RecursiveTreeNode";
 import {Tree} from 'react-organizational-chart';
 import {getData} from "../requests";
 import {Typography} from "antd";
@@ -15,6 +15,7 @@ export const FamilyTreePage: React.FC = () => {
     const [familyTreeData, setFamilyTreeData] = useState<IObjectConvertedInCamelNotationData>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<null | string>(null);
+    const [wasDataChanged, setWasDataChanged] = useState<boolean>(false);
 
     useEffect(() => {
         getData().then((response) => {
@@ -35,7 +36,7 @@ export const FamilyTreePage: React.FC = () => {
         }).catch(({message}) => {
             setError(`Что-то пошло не так: ${message}`);
         });
-    }, [data.length]);
+    }, [data.length, wasDataChanged]);
 
 
     if (isLoading) {
@@ -52,7 +53,10 @@ export const FamilyTreePage: React.FC = () => {
             {Object.keys(familyTreeData).length ? <Tree label={<Typography.Title level={4}>
                 Ваша родословная
             </Typography.Title>}>
-                <RecursiveTreeNode key={familyTreeData.id} setFamilyTreeData={setData} {...familyTreeData}/>
+                <RecursiveTreeNode key={familyTreeData.id} setWasDataChanged={setWasDataChanged}
+                                   setFamilyTreeData={setData}
+                                   {...familyTreeData}
+                />
             </Tree> : null}
             <ScaleForm/>
         </div>

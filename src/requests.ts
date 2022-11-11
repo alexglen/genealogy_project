@@ -75,7 +75,6 @@ export const createPerson = async (body: any) => {
 
 
 export const updatePerson = async (body: any, id: number) => {
-    console.log("BODYYYYYin Updaate", body)
     try {
         return await axios.put(`http://127.0.0.1:8000/api/v1/family/${id}/`, body, {
             headers: {

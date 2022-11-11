@@ -7,10 +7,6 @@ import {ScaleContainer} from "./context/scaleContext";
 import 'antd/dist/antd.css';
 import "./index.scss";
 
-import {QueryClient, QueryClientProvider, useQuery} from 'react-query'
-
-const queryClient = new QueryClient();
-
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -18,14 +14,12 @@ const root = ReactDOM.createRoot(
 
 root.render(
     <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
-            <ScaleContainer>
-                <AuthContainer>
-                    <BrowserRouter>
-                        <AppRoutes/>
-                    </BrowserRouter>
-                </AuthContainer>
-            </ScaleContainer>
-        </QueryClientProvider>
+        <ScaleContainer>
+            <AuthContainer>
+                <BrowserRouter>
+                    <AppRoutes/>
+                </BrowserRouter>
+            </AuthContainer>
+        </ScaleContainer>
     </React.StrictMode>
 );

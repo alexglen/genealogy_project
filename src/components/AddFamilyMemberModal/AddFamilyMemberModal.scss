@@ -1,3 +1,8 @@
-.add-family-member-modal .ant-modal-body  {
-  padding-bottom: 0;
+.add-family-member-modal .ant-modal-body {
+  padding-bottom: 5px;
+}
+
+label[for=basic_avatar] {
+  color: red;
+  margin-top: 35px;
 }

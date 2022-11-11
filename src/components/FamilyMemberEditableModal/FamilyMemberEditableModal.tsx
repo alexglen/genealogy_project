@@ -1,113 +1,88 @@
-import React, {useEffect, useState} from "react";
-import {Button, DatePicker, Form, Input, Modal, Radio, Space} from "antd";
-import {FamilyMemberImage} from "../FamilyMemberImage/FamilyMemberImage";
-import {FamilyMemberInfoType} from "../../models";
-import {getCookie, getDateForFamilyMemberCard} from "../../helpers";
+import React, {useState} from "react";
+import {Button, DatePicker, DatePickerProps, Form, Input, Modal, Radio} from "antd";
+import {IFamilyMemberEditableModal} from "../../models";
+import {getDateForFamilyMemberCard} from "../../helpers";
 import {ConfirmDeletingFamilyMemberModal} from "../ConfirmDeletingFamilyMemberModal/ConfirmDeletingFamilyMemberModal";
-import {FEMALE, MALE} from "../../constants";
-import "./FamilyMemberEditableModal.scss";
-import {createPerson, getData, updatePerson} from "../../requests";
+import {FEMALE} from "../../constants";
+import {updatePerson} from "../../requests";
 import moment from "moment";
+import "./FamilyMemberEditableModal.scss";
 
 export const FamilyMemberEditableModal = ({
-                                              editableModal,
+                                              isOpenEditableModal,
                                               familyMember,
-                                              setEditableModal,
+                                              setOpenEditableModal,
                                               setIsConfirmDeletingFamilyMemberOpen,
-                                              isConfirmDeletingFamilyMemberOpen
-                                          }: any) => {
+                                              isConfirmDeletingFamilyMemberOpen,
+                                              setOpen,
+                                              setFamilyTreeData
+                                          }: IFamilyMemberEditableModal) => {
+
     const {
         firstName,
         lastName,
-        birthDate,
-        deathDate,
-        avatar,
+        birth,
+        death,
         gender,
         maidenName,
         bio,
-        treeOwner,
-        parents,
         id,
-        setFamilyTreeData
+        setWasDataChanged
     } = familyMember;
 
-    const {isNewFamilyMember, gender: genderStatus} = editableModal;
+    const [isAlive, setIsAlive] = useState<boolean>(true);
+    const [date, setDate] = useState<{ birth: string | null, death: string | null }>({birth: null, death: null});
 
-    const lifeYears = deathDate ? `(${getDateForFamilyMemberCard(birthDate as string)} - ${getDateForFamilyMemberCard(deathDate)})`
-        : `(р. ${getDateForFamilyMemberCard(birthDate as string)})`;
-
-    const handleCancel = () => {
-        setEditableModal((state: { isOpenModal: boolean, isNewFamilyMember: boolean }) => ({
-            isOpenModal: false,
-            isNewFamilyMember: false
-        }))
+    const changeBirthDate: DatePickerProps['onChange'] = (_, dateString) => {
+        console.log("BIRTH DATE", dateString);
+        setDate({...date, birth: dateString});
     };
 
-    const deleteFamilyMember = () => {
+    const changeDeathDate: DatePickerProps['onChange'] = (_, dateString) => {
+        setDate({...date, death: dateString});
+    };
+
+
+    const lifeYears = death ? `(${getDateForFamilyMemberCard(birth as string)} - ${getDateForFamilyMemberCard(death)})`
+        : `(р. ${getDateForFamilyMemberCard(birth as string)})`;
+
+    const cancelModal = (): void => {
+        setOpenEditableModal(false);
+    };
+
+    const openConfirmDeletingFamilyMemberModal = (): void => {
         setIsConfirmDeletingFamilyMemberOpen(true);
     }
 
-    const titleTextOfNewMemberFamily = genderStatus === MALE ? `${firstName} ${lastName} : добавить отца` : `${firstName} ${lastName}: добавить мать`
-    const titleText = !isNewFamilyMember ? `${firstName} ${lastName} ${lifeYears}` : titleTextOfNewMemberFamily;
-    const genderKey = genderStatus === MALE ? "father" : "mother";
-
-    const onFinish = ({firstName, lastName, bio}: any) => {
-        if (isNewFamilyMember) {
-            const body = {
-                gender: genderStatus,
-                first_name: firstName,
-                user: 46,
-                last_name: lastName,
-                maiden_name: null,
-                birth: null,
-                death: null,
-                birth_ca: null,
-                death_ca: null,
-                photo: null,
-                tree_owner: false,
-                father: null,
-                mother: null,
-                bio,
-                spouse: [],
-            }
-
-            createPerson(body).then(res => {
-                // @ts-ignore
-                const {id: parentId} = res?.data?.at(0);
-                setEditableModal(false);
-                // @ts-ignore
-                // @ts-ignore
-                updatePerson({
-                    [genderKey]: parentId,
-                    user: 46,
-                    first_name: familyMember.firstName,
-                    gender: familyMember.gender
-                }, id as number).then(res => {
-                    setFamilyTreeData(res?.data)
-                })
-            })
+    const onFinish = ({firstName, lastName, bio, maidenName}: any) => {
+        const body = {
+            first_name: firstName,
+            user: 46,
+            last_name: lastName,
+            maiden_name: maidenName,
+            birth: date.birth,
+            death: date.death,
+            bio,
         }
-    };
 
-    // @ts-ignore
+        updatePerson(
+            body, id as number).then(response => {
+            setFamilyTreeData(response?.data);
+            setWasDataChanged(true);
+            setOpenEditableModal(false);
+        })
+    }
+
     return (
         <div>
             <Modal
-                open={editableModal.isOpenModal}
-                title={titleText}
+                open={isOpenEditableModal}
+                title={`${firstName} ${lastName} ${lifeYears}`}
                 className="family-member-editable-modal"
-                onCancel={handleCancel}
+                onCancel={cancelModal}
                 width={460}
                 style={{top: 20}}
-                footer={!isNewFamilyMember ? [
-                    <Button key="back">
-                        Сохранить
-                    </Button>,
-                    <Button key="submit" type="primary" disabled={(treeOwner || parents?.length) as boolean}
-                            onClick={deleteFamilyMember}>
-                        Удалить
-                    </Button>
-                ] : []}
+                footer={[]}
             >
                 <div>
                     <Form
@@ -116,12 +91,10 @@ export const FamilyMemberEditableModal = ({
                             span: 8,
                         }}
                         initialValues={{
-                            lastName: isNewFamilyMember ? "" : lastName,
-                            firstName: isNewFamilyMember ? "" : firstName,
-                            surname: isNewFamilyMember ? "" : lastName,
-                            maidenName: isNewFamilyMember ? "" : maidenName,
-                            bio: isNewFamilyMember ? "" : bio
-
+                            lastName,
+                            firstName,
+                            maidenName,
+                            bio,
                         }}
                         autoComplete="off"
                         onFinish={onFinish}
@@ -132,19 +105,7 @@ export const FamilyMemberEditableModal = ({
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your username!',
-                                },
-                            ]}
-                        >
-                            <Input/>
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Отчество"
-                            name="lastName"
-                            rules={[
-                                {
-                                    message: 'Please input your username!',
+                                    message: 'Вы забыли написать имя!',
                                 },
                             ]}
                         >
@@ -153,26 +114,14 @@ export const FamilyMemberEditableModal = ({
 
                         <Form.Item
                             label="Фамилия"
-                            name="surname"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your username!',
-                                },
-                            ]}
+                            name="lastName"
                         >
                             <Input/>
                         </Form.Item>
 
-                        {genderStatus === FEMALE ? <Form.Item
+                        {gender === FEMALE ? <Form.Item
                             label="Девичья фамилия"
                             name="maidenName"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your username!',
-                                },
-                            ]}
                         >
                             <Input/>
                         </Form.Item> : null}
@@ -180,22 +129,33 @@ export const FamilyMemberEditableModal = ({
                         <Form.Item
                             label="Дата рождения"
                             name="birth"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input your username!',
-                                },
-                            ]}
                         >
-                            <DatePicker defaultValue={moment('1990/01/01', 'YYYY/MM')}/>
+                            <DatePicker onChange={changeBirthDate}
+                                        defaultValue={birth ? moment(birth) : moment('2022/01/01')}/>
                         </Form.Item>
 
-                        <Form.Item>
-                            <Radio.Group value={isNewFamilyMember ? "" : deathDate ? "dead" : "alive"}>
+                        <Form.Item name='isAlive'>
+                            <Radio.Group value="alive"
+                                         onChange={({target: {value}}) => value === "alive" ? setIsAlive(true) : setIsAlive(false)}>
                                 <Radio value="alive">{gender === FEMALE ? "Жива" : "Жив"}</Radio>
                                 <Radio value="dead">{gender === FEMALE ? "Умерла" : "Умер"}</Radio>
                             </Radio.Group>
                         </Form.Item>
+
+                        {!isAlive && <Form.Item
+                            label="Дата смерти"
+                            name="death"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Пожалуйста, напишите дату рождения',
+                                },
+                            ]}
+                        >
+                            <DatePicker onChange={changeDeathDate}
+                                        defaultValue={death ? moment(death) : moment('2022/01/01')}/>
+                        </Form.Item>}
+
                         <p>Биография: </p>
                         <Form.Item
                             name="bio"
@@ -208,20 +168,30 @@ export const FamilyMemberEditableModal = ({
                         >
                             <Input.TextArea/>
                         </Form.Item>
-                        <Form.Item wrapperCol={{offset: 8, span: 16}} className="create-person-button">
-                            <Button type="primary" htmlType="submit">
-                                Создать личность
-                            </Button>
-                        </Form.Item>
+
+                        <div className='buttons'>
+                            <Form.Item>
+                                <Button className='delete-button' onClick={openConfirmDeletingFamilyMemberModal}>
+                                    Удалить
+                                </Button>
+                            </Form.Item>
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Сохранить изменения
+                                </Button>
+                            </Form.Item>
+                        </div>
+
                     </Form>
                 </div>
 
             </Modal>
-            <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
-                                              setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
-                                              id={id}
-                                              setEditableModal={setEditableModal}
-                                              setFamilyTreeData={setFamilyTreeData}
-            />
+            {isConfirmDeletingFamilyMemberOpen ?
+                <ConfirmDeletingFamilyMemberModal isModalOpen={isConfirmDeletingFamilyMemberOpen}
+                                                  setIsConfirmDeletingFamilyMemberOpen={setIsConfirmDeletingFamilyMemberOpen}
+                                                  id={id}
+                                                  setOpenEditableModal={setOpenEditableModal}
+                                                  setFamilyTreeData={setFamilyTreeData}
+                /> : null}
         </div>)
 }

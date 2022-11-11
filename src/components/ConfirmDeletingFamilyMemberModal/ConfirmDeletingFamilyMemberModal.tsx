@@ -7,17 +7,16 @@ export const ConfirmDeletingFamilyMemberModal = ({
                                                      isModalOpen,
                                                      setIsConfirmDeletingFamilyMemberOpen,
                                                      id,
-                                                     setEditableModal,
+                                                     setOpenEditableModal,
                                                      setOpen,
                                                      setFamilyTreeData
                                                  }: IConfirmDeletingFamilyMemberModal) => {
 
-    const deleteFamilyMember = () => {
+    const deleteFamilyMember = (): void => {
         deletePerson(id as number).then(response => {
-            setIsConfirmDeletingFamilyMemberOpen(false);
-            // setOpen(false);
-            setEditableModal(false);
-            console.log('response in DELETE')
+            cancelModal();
+            setOpen?.(false);
+            setOpenEditableModal?.(false);
             setFamilyTreeData(response?.data);
         })
     };
@@ -25,6 +24,7 @@ export const ConfirmDeletingFamilyMemberModal = ({
     const cancelModal = () => {
         setIsConfirmDeletingFamilyMemberOpen(false);
     };
+
     return (
         <Modal title="Удаление предка из древа" open={isModalOpen} onOk={deleteFamilyMember} onCancel={cancelModal}>
             <p>Вы уверены, что хотите удалить предка?</p>
